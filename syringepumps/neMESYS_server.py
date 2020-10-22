@@ -48,38 +48,38 @@ from qmixsdk import qmixpump
 from sila2lib.sila_server import SiLA2Server
 
 # Import gRPC libraries of features
-from .PumpDriveControlService.gRPC import PumpDriveControlService_pb2
-from .PumpDriveControlService.gRPC import PumpDriveControlService_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.PumpDriveControlService.gRPC import PumpDriveControlService_pb2
+from impl.de.cetoni.pumps.syringepumps.PumpDriveControlService.gRPC import PumpDriveControlService_pb2_grpc
 # import default arguments for this feature
-from .PumpDriveControlService.PumpDriveControlService_default_arguments import default_dict as PumpDriveControlService_default_dict
-from .PumpUnitController.gRPC import PumpUnitController_pb2
-from .PumpUnitController.gRPC import PumpUnitController_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.PumpDriveControlService.PumpDriveControlService_default_arguments import default_dict as PumpDriveControlService_default_dict
+from impl.de.cetoni.pumps.syringepumps.PumpUnitController.gRPC import PumpUnitController_pb2
+from impl.de.cetoni.pumps.syringepumps.PumpUnitController.gRPC import PumpUnitController_pb2_grpc
 # import default arguments for this feature
-from .PumpUnitController.PumpUnitController_default_arguments import default_dict as PumpUnitController_default_dict
-from .PumpFluidDosingService.gRPC import PumpFluidDosingService_pb2
-from .PumpFluidDosingService.gRPC import PumpFluidDosingService_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.PumpUnitController.PumpUnitController_default_arguments import default_dict as PumpUnitController_default_dict
+from impl.de.cetoni.pumps.syringepumps.PumpFluidDosingService.gRPC import PumpFluidDosingService_pb2
+from impl.de.cetoni.pumps.syringepumps.PumpFluidDosingService.gRPC import PumpFluidDosingService_pb2_grpc
 # import default arguments for this feature
-from .PumpFluidDosingService.PumpFluidDosingService_default_arguments import default_dict as PumpFluidDosingService_default_dict
-from .SyringeConfigurationController.gRPC import SyringeConfigurationController_pb2
-from .SyringeConfigurationController.gRPC import SyringeConfigurationController_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.PumpFluidDosingService.PumpFluidDosingService_default_arguments import default_dict as PumpFluidDosingService_default_dict
+from impl.de.cetoni.pumps.syringepumps.SyringeConfigurationController.gRPC import SyringeConfigurationController_pb2
+from impl.de.cetoni.pumps.syringepumps.SyringeConfigurationController.gRPC import SyringeConfigurationController_pb2_grpc
 # import default arguments for this feature
-from .SyringeConfigurationController.SyringeConfigurationController_default_arguments import default_dict as SyringeConfigurationController_default_dict
-from .ValvePositionController.gRPC import ValvePositionController_pb2
-from .ValvePositionController.gRPC import ValvePositionController_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.SyringeConfigurationController.SyringeConfigurationController_default_arguments import default_dict as SyringeConfigurationController_default_dict
+from impl.de.cetoni.pumps.syringepumps.ValvePositionController.gRPC import ValvePositionController_pb2
+from impl.de.cetoni.pumps.syringepumps.ValvePositionController.gRPC import ValvePositionController_pb2_grpc
 # import default arguments for this feature
-from .ValvePositionController.ValvePositionController_default_arguments import default_dict as ValvePositionController_default_dict
-from .ShutdownController.gRPC import ShutdownController_pb2
-from .ShutdownController.gRPC import ShutdownController_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.ValvePositionController.ValvePositionController_default_arguments import default_dict as ValvePositionController_default_dict
+from impl.de.cetoni.pumps.syringepumps.ShutdownController.gRPC import ShutdownController_pb2
+from impl.de.cetoni.pumps.syringepumps.ShutdownController.gRPC import ShutdownController_pb2_grpc
 # import default arguments for this feature
-from .ShutdownController.ShutdownController_default_arguments import default_dict as ShutdownController_default_dict
+from impl.de.cetoni.pumps.syringepumps.ShutdownController.ShutdownController_default_arguments import default_dict as ShutdownController_default_dict
 
 # Import the servicer modules for each feature
-from .PumpDriveControlService.PumpDriveControlService_servicer import PumpDriveControlService
-from .PumpUnitController.PumpUnitController_servicer import PumpUnitController
-from .PumpFluidDosingService.PumpFluidDosingService_servicer import PumpFluidDosingService
-from .SyringeConfigurationController.SyringeConfigurationController_servicer import SyringeConfigurationController
-from .ValvePositionController.ValvePositionController_servicer import ValvePositionController
-from .ShutdownController.ShutdownController_servicer import ShutdownController
+from impl.de.cetoni.pumps.syringepumps.PumpDriveControlService.PumpDriveControlService_servicer import PumpDriveControlService
+from impl.de.cetoni.pumps.syringepumps.PumpUnitController.PumpUnitController_servicer import PumpUnitController
+from impl.de.cetoni.pumps.syringepumps.PumpFluidDosingService.PumpFluidDosingService_servicer import PumpFluidDosingService
+from impl.de.cetoni.pumps.syringepumps.SyringeConfigurationController.SyringeConfigurationController_servicer import SyringeConfigurationController
+from impl.de.cetoni.pumps.syringepumps.ValvePositionController.ValvePositionController_servicer import ValvePositionController
+from impl.de.cetoni.pumps.syringepumps.ShutdownController.ShutdownController_servicer import ShutdownController
 
 from local_ip import LOCAL_IP
 
@@ -107,7 +107,8 @@ class neMESYSServer(SiLA2Server):
             )
         )
 
-        meta_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'meta')
+        data_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..',
+                                 'features', 'de', 'cetoni', 'pumps', 'syringepumps')
 
         # registering features
         #  Register PumpDriveControlService
@@ -121,7 +122,7 @@ class neMESYSServer(SiLA2Server):
         )
         self.add_feature(feature_id='PumpDriveControlService',
                          servicer=self.PumpDriveControlService_servicer,
-                         data_path=meta_path)
+                         data_path=data_path)
         #  Register PumpUnitController
         self.PumpUnitController_servicer = PumpUnitController(
             pump=qmix_pump,
@@ -132,7 +133,7 @@ class neMESYSServer(SiLA2Server):
         )
         self.add_feature(feature_id='PumpUnitController',
                          servicer=self.PumpUnitController_servicer,
-                         data_path=meta_path)
+                         data_path=data_path)
         #  Register PumpFluidDosingService
         self.PumpFluidDosingService_servicer = PumpFluidDosingService(
             pump=qmix_pump,
@@ -143,7 +144,7 @@ class neMESYSServer(SiLA2Server):
         )
         self.add_feature(feature_id='PumpFluidDosingService',
                          servicer=self.PumpFluidDosingService_servicer,
-                         data_path=meta_path)
+                         data_path=data_path)
         #  Register SyringeConfigurationController
         self.SyringeConfigurationController_servicer = SyringeConfigurationController(
             pump=qmix_pump,
@@ -154,7 +155,7 @@ class neMESYSServer(SiLA2Server):
         )
         self.add_feature(feature_id='SyringeConfigurationController',
                          servicer=self.SyringeConfigurationController_servicer,
-                         data_path=meta_path)
+                         data_path=data_path)
         #  Register ValvePositionController
         self.ValvePositionController_servicer = ValvePositionController(
             pump=qmix_pump,
@@ -165,7 +166,7 @@ class neMESYSServer(SiLA2Server):
         )
         self.add_feature(feature_id='ValvePositionController',
                          servicer=self.ValvePositionController_servicer,
-                         data_path=meta_path)
+                         data_path=data_path)
         #  Register ShutdownController
         self.ShutdownController_servicer = ShutdownController(
             pump=qmix_pump,
@@ -179,7 +180,7 @@ class neMESYSServer(SiLA2Server):
         )
         self.add_feature(feature_id='ShutdownController',
                          servicer=self.ShutdownController_servicer,
-                         data_path=meta_path)
+                         data_path=data_path)
 
         self.simulation_mode = simulation_mode
 

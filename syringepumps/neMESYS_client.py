@@ -8,7 +8,7 @@ ________________________________________________________________________
 
 :details: neMESYS:
     This is a sample service for controlling neMESYS syringe pumps via SiLA2
-           
+
 :file:    neMESYS_client.py
 :authors: Florian Meinicke
 
@@ -47,30 +47,30 @@ from sila2lib.error_handling import client_err
 
 # import feature gRPC modules
 # Import gRPC libraries of features
-from PumpDriveControlService.gRPC import PumpDriveControlService_pb2
-from PumpDriveControlService.gRPC import PumpDriveControlService_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.PumpDriveControlService.gRPC import PumpDriveControlService_pb2
+from impl.de.cetoni.pumps.syringepumps.PumpDriveControlService.gRPC import PumpDriveControlService_pb2_grpc
 # import default arguments for this feature
-from PumpDriveControlService.PumpDriveControlService_default_arguments import default_dict as PumpDriveControlService_default_dict
-from PumpUnitController.gRPC import PumpUnitController_pb2
-from PumpUnitController.gRPC import PumpUnitController_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.PumpDriveControlService.PumpDriveControlService_default_arguments import default_dict as PumpDriveControlService_default_dict
+from impl.de.cetoni.pumps.syringepumps.PumpUnitController.gRPC import PumpUnitController_pb2
+from impl.de.cetoni.pumps.syringepumps.PumpUnitController.gRPC import PumpUnitController_pb2_grpc
 # import default arguments for this feature
-from PumpUnitController.PumpUnitController_default_arguments import default_dict as PumpUnitController_default_dict
-from PumpFluidDosingService.gRPC import PumpFluidDosingService_pb2
-from PumpFluidDosingService.gRPC import PumpFluidDosingService_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.PumpUnitController.PumpUnitController_default_arguments import default_dict as PumpUnitController_default_dict
+from impl.de.cetoni.pumps.syringepumps.PumpFluidDosingService.gRPC import PumpFluidDosingService_pb2
+from impl.de.cetoni.pumps.syringepumps.PumpFluidDosingService.gRPC import PumpFluidDosingService_pb2_grpc
 # import default arguments for this feature
-from PumpFluidDosingService.PumpFluidDosingService_default_arguments import default_dict as PumpFluidDosingService_default_dict
-from SyringeConfigurationController.gRPC import SyringeConfigurationController_pb2
-from SyringeConfigurationController.gRPC import SyringeConfigurationController_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.PumpFluidDosingService.PumpFluidDosingService_default_arguments import default_dict as PumpFluidDosingService_default_dict
+from impl.de.cetoni.pumps.syringepumps.SyringeConfigurationController.gRPC import SyringeConfigurationController_pb2
+from impl.de.cetoni.pumps.syringepumps.SyringeConfigurationController.gRPC import SyringeConfigurationController_pb2_grpc
 # import default arguments for this feature
-from SyringeConfigurationController.SyringeConfigurationController_default_arguments import default_dict as SyringeConfigurationController_default_dict
-from ValvePositionController.gRPC import ValvePositionController_pb2
-from ValvePositionController.gRPC import ValvePositionController_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.SyringeConfigurationController.SyringeConfigurationController_default_arguments import default_dict as SyringeConfigurationController_default_dict
+from impl.de.cetoni.pumps.syringepumps.ValvePositionController.gRPC import ValvePositionController_pb2
+from impl.de.cetoni.pumps.syringepumps.ValvePositionController.gRPC import ValvePositionController_pb2_grpc
 # import default arguments for this feature
-from ValvePositionController.ValvePositionController_default_arguments import default_dict as ValvePositionController_default_dict
-from ShutdownController.gRPC import ShutdownController_pb2
-from ShutdownController.gRPC import ShutdownController_pb2_grpc
+from impl.de.cetoni.pumps.syringepumps.ValvePositionController.ValvePositionController_default_arguments import default_dict as ValvePositionController_default_dict
+from impl.de.cetoni.pumps.syringepumps.ShutdownController.gRPC import ShutdownController_pb2
+from impl.de.cetoni.pumps.syringepumps.ShutdownController.gRPC import ShutdownController_pb2_grpc
 # import default arguments for this feature
-from ShutdownController.ShutdownController_default_arguments import default_dict as ShutdownController_default_dict
+from impl.de.cetoni.pumps.syringepumps.ShutdownController.ShutdownController_default_arguments import default_dict as ShutdownController_default_dict
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
@@ -224,20 +224,20 @@ class neMESYSClient(SiLA2Client):
         # TODO: Implement all routines that have to be executed when the client is stopped.
         #   Feel free to use the "force" parameter to abort any running processes. Or crash your machine. Your call!
         return True
-            
+
     def InitializePumpDrive(self,
                       parameter: PumpDriveControlService_pb2.InitializePumpDrive_Parameters = None) \
             -> PumpDriveControlService_pb2.InitializePumpDrive_Responses:
         """
         Wrapper to call the unobservable command InitializePumpDrive on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A gRPC object with the response that has been defined for this command.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling InitializePumpDrive:")
         try:
             # resolve to default if no value given
@@ -246,29 +246,29 @@ class neMESYSClient(SiLA2Client):
                 parameter = PumpDriveControlService_pb2.InitializePumpDrive_Parameters(
                     **PumpDriveControlService_default_dict['InitializePumpDrive_Parameters']
                 )
-    
+
             response = self.PumpDriveControlService_stub.InitializePumpDrive(parameter)
-    
+
             logging.debug('InitializePumpDrive response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def EnablePumpDrive(self,
                       parameter: PumpDriveControlService_pb2.EnablePumpDrive_Parameters = None) \
             -> PumpDriveControlService_pb2.EnablePumpDrive_Responses:
         """
         Wrapper to call the unobservable command EnablePumpDrive on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A gRPC object with the response that has been defined for this command.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling EnablePumpDrive:")
         try:
             # resolve to default if no value given
@@ -277,29 +277,29 @@ class neMESYSClient(SiLA2Client):
                 parameter = PumpDriveControlService_pb2.EnablePumpDrive_Parameters(
                     **PumpDriveControlService_default_dict['EnablePumpDrive_Parameters']
                 )
-    
+
             response = self.PumpDriveControlService_stub.EnablePumpDrive(parameter)
-    
+
             logging.debug('EnablePumpDrive response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def DisablePumpDrive(self,
                       parameter: PumpDriveControlService_pb2.DisablePumpDrive_Parameters = None) \
             -> PumpDriveControlService_pb2.DisablePumpDrive_Responses:
         """
         Wrapper to call the unobservable command DisablePumpDrive on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A gRPC object with the response that has been defined for this command.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling DisablePumpDrive:")
         try:
             # resolve to default if no value given
@@ -308,29 +308,29 @@ class neMESYSClient(SiLA2Client):
                 parameter = PumpDriveControlService_pb2.DisablePumpDrive_Parameters(
                     **PumpDriveControlService_default_dict['DisablePumpDrive_Parameters']
                 )
-    
+
             response = self.PumpDriveControlService_stub.DisablePumpDrive(parameter)
-    
+
             logging.debug('DisablePumpDrive response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def SetFlowUnit(self,
                       parameter: PumpUnitController_pb2.SetFlowUnit_Parameters = None) \
             -> PumpUnitController_pb2.SetFlowUnit_Responses:
         """
         Wrapper to call the unobservable command SetFlowUnit on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A gRPC object with the response that has been defined for this command.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling SetFlowUnit:")
         try:
             # resolve to default if no value given
@@ -339,29 +339,29 @@ class neMESYSClient(SiLA2Client):
                 parameter = PumpUnitController_pb2.SetFlowUnit_Parameters(
                     **PumpUnitController_default_dict['SetFlowUnit_Parameters']
                 )
-    
+
             response = self.PumpUnitController_stub.SetFlowUnit(parameter)
-    
+
             logging.debug('SetFlowUnit response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def SetVolumeUnit(self,
                       parameter: PumpUnitController_pb2.SetVolumeUnit_Parameters = None) \
             -> PumpUnitController_pb2.SetVolumeUnit_Responses:
         """
         Wrapper to call the unobservable command SetVolumeUnit on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A gRPC object with the response that has been defined for this command.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling SetVolumeUnit:")
         try:
             # resolve to default if no value given
@@ -370,31 +370,31 @@ class neMESYSClient(SiLA2Client):
                 parameter = PumpUnitController_pb2.SetVolumeUnit_Parameters(
                     **PumpUnitController_default_dict['SetVolumeUnit_Parameters']
                 )
-    
+
             response = self.PumpUnitController_stub.SetVolumeUnit(parameter)
-    
+
             logging.debug('SetVolumeUnit response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def SetFillLevel(self,
                       parameter: PumpFluidDosingService_pb2.SetFillLevel_Parameters = None) \
             -> silaFW_pb2.CommandConfirmation:
         """
         Wrapper to call the observable command SetFillLevel on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A command confirmation object with the following information:
             commandExecutionUUID: A command id with which this observable command can be referenced in future calls
             lifetimeOfExecution (optional): The (maximum) lifetime of this command call.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling SetFillLevel:")
         try:
             # resolve to default if no value given
@@ -403,25 +403,25 @@ class neMESYSClient(SiLA2Client):
                 parameter = PumpFluidDosingService_pb2.SetFillLevel_Parameters(
                     **PumpFluidDosingService_default_dict['SetFillLevel_Parameters']
                 )
-    
+
             response = self.PumpFluidDosingService_stub.SetFillLevel(parameter)
-    
+
             logging.debug('SetFillLevel response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def SetFillLevel_Info(self,
                            uuid: Union[str, silaFW_pb2.CommandExecutionUUID]) \
             -> silaFW_pb2.ExecutionInfo:
         """
         Wrapper to get an intermediate response for the observable command SetFillLevel on the server.
-    
+
         :param uuid: The UUID that has been returned with the first command call. Can be given as string or as the
                      corresponding SiLA2 gRPC object.
-    
+
         :returns: A gRPC object with the status information that has been defined for this command. The following fields
                   are defined:
                     * *commandStatus*: Status of the command (enumeration)
@@ -431,10 +431,10 @@ class neMESYSClient(SiLA2Client):
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         if type(uuid) is str:
             uuid = silaFW_pb2.CommandExecutionUUID(value=uuid)
-    
+
         logging.debug(
             "Requesting status information for command SetFillLevel (UUID={uuid}):".format(
                 uuid=uuid.value
@@ -446,56 +446,56 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def SetFillLevel_Result(self,
                              uuid: Union[str, silaFW_pb2.CommandExecutionUUID]) \
             -> PumpFluidDosingService_pb2.SetFillLevel_Responses:
         """
         Wrapper to get an intermediate response for the observable command SetFillLevel on the server.
-    
+
         :param uuid: The UUID that has been returned with the first command call. Can be given as string or as the
                      corresponding SiLA2 gRPC object.
-    
+
         :returns: A gRPC object with the result response that has been defined for this command.
-    
+
         .. note:: Whether the result is available or not can and should be evaluated by calling the
                   :meth:`SetFillLevel_Info` method of this call.
         """
         if type(uuid) is str:
             uuid = silaFW_pb2.CommandExecutionUUID(value=uuid)
-    
+
         logging.debug(
             "Requesting status information for command SetFillLevel (UUID={uuid}):".format(
                 uuid=uuid.value
             )
         )
-    
+
         try:
             response = self.PumpFluidDosingService_stub.SetFillLevel_Result(uuid)
             logging.debug('SetFillLevel result response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def DoseVolume(self,
                       parameter: PumpFluidDosingService_pb2.DoseVolume_Parameters = None) \
             -> silaFW_pb2.CommandConfirmation:
         """
         Wrapper to call the observable command DoseVolume on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A command confirmation object with the following information:
             commandExecutionUUID: A command id with which this observable command can be referenced in future calls
             lifetimeOfExecution (optional): The (maximum) lifetime of this command call.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling DoseVolume:")
         try:
             # resolve to default if no value given
@@ -504,25 +504,25 @@ class neMESYSClient(SiLA2Client):
                 parameter = PumpFluidDosingService_pb2.DoseVolume_Parameters(
                     **PumpFluidDosingService_default_dict['DoseVolume_Parameters']
                 )
-    
+
             response = self.PumpFluidDosingService_stub.DoseVolume(parameter)
-    
+
             logging.debug('DoseVolume response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def DoseVolume_Info(self,
                            uuid: Union[str, silaFW_pb2.CommandExecutionUUID]) \
             -> silaFW_pb2.ExecutionInfo:
         """
         Wrapper to get an intermediate response for the observable command DoseVolume on the server.
-    
+
         :param uuid: The UUID that has been returned with the first command call. Can be given as string or as the
                      corresponding SiLA2 gRPC object.
-    
+
         :returns: A gRPC object with the status information that has been defined for this command. The following fields
                   are defined:
                     * *commandStatus*: Status of the command (enumeration)
@@ -532,10 +532,10 @@ class neMESYSClient(SiLA2Client):
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         if type(uuid) is str:
             uuid = silaFW_pb2.CommandExecutionUUID(value=uuid)
-    
+
         logging.debug(
             "Requesting status information for command DoseVolume (UUID={uuid}):".format(
                 uuid=uuid.value
@@ -547,56 +547,56 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def DoseVolume_Result(self,
                              uuid: Union[str, silaFW_pb2.CommandExecutionUUID]) \
             -> PumpFluidDosingService_pb2.DoseVolume_Responses:
         """
         Wrapper to get an intermediate response for the observable command DoseVolume on the server.
-    
+
         :param uuid: The UUID that has been returned with the first command call. Can be given as string or as the
                      corresponding SiLA2 gRPC object.
-    
+
         :returns: A gRPC object with the result response that has been defined for this command.
-    
+
         .. note:: Whether the result is available or not can and should be evaluated by calling the
                   :meth:`DoseVolume_Info` method of this call.
         """
         if type(uuid) is str:
             uuid = silaFW_pb2.CommandExecutionUUID(value=uuid)
-    
+
         logging.debug(
             "Requesting status information for command DoseVolume (UUID={uuid}):".format(
                 uuid=uuid.value
             )
         )
-    
+
         try:
             response = self.PumpFluidDosingService_stub.DoseVolume_Result(uuid)
             logging.debug('DoseVolume result response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def GenerateFlow(self,
                       parameter: PumpFluidDosingService_pb2.GenerateFlow_Parameters = None) \
             -> silaFW_pb2.CommandConfirmation:
         """
         Wrapper to call the observable command GenerateFlow on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A command confirmation object with the following information:
             commandExecutionUUID: A command id with which this observable command can be referenced in future calls
             lifetimeOfExecution (optional): The (maximum) lifetime of this command call.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling GenerateFlow:")
         try:
             # resolve to default if no value given
@@ -605,25 +605,25 @@ class neMESYSClient(SiLA2Client):
                 parameter = PumpFluidDosingService_pb2.GenerateFlow_Parameters(
                     **PumpFluidDosingService_default_dict['GenerateFlow_Parameters']
                 )
-    
+
             response = self.PumpFluidDosingService_stub.GenerateFlow(parameter)
-    
+
             logging.debug('GenerateFlow response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def GenerateFlow_Info(self,
                            uuid: Union[str, silaFW_pb2.CommandExecutionUUID]) \
             -> silaFW_pb2.ExecutionInfo:
         """
         Wrapper to get an intermediate response for the observable command GenerateFlow on the server.
-    
+
         :param uuid: The UUID that has been returned with the first command call. Can be given as string or as the
                      corresponding SiLA2 gRPC object.
-    
+
         :returns: A gRPC object with the status information that has been defined for this command. The following fields
                   are defined:
                     * *commandStatus*: Status of the command (enumeration)
@@ -633,10 +633,10 @@ class neMESYSClient(SiLA2Client):
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         if type(uuid) is str:
             uuid = silaFW_pb2.CommandExecutionUUID(value=uuid)
-    
+
         logging.debug(
             "Requesting status information for command GenerateFlow (UUID={uuid}):".format(
                 uuid=uuid.value
@@ -648,54 +648,54 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def GenerateFlow_Result(self,
                              uuid: Union[str, silaFW_pb2.CommandExecutionUUID]) \
             -> PumpFluidDosingService_pb2.GenerateFlow_Responses:
         """
         Wrapper to get an intermediate response for the observable command GenerateFlow on the server.
-    
+
         :param uuid: The UUID that has been returned with the first command call. Can be given as string or as the
                      corresponding SiLA2 gRPC object.
-    
+
         :returns: A gRPC object with the result response that has been defined for this command.
-    
+
         .. note:: Whether the result is available or not can and should be evaluated by calling the
                   :meth:`GenerateFlow_Info` method of this call.
         """
         if type(uuid) is str:
             uuid = silaFW_pb2.CommandExecutionUUID(value=uuid)
-    
+
         logging.debug(
             "Requesting status information for command GenerateFlow (UUID={uuid}):".format(
                 uuid=uuid.value
             )
         )
-    
+
         try:
             response = self.PumpFluidDosingService_stub.GenerateFlow_Result(uuid)
             logging.debug('GenerateFlow result response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def StopDosage(self,
                       parameter: PumpFluidDosingService_pb2.StopDosage_Parameters = None) \
             -> PumpFluidDosingService_pb2.StopDosage_Responses:
         """
         Wrapper to call the unobservable command StopDosage on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A gRPC object with the response that has been defined for this command.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling StopDosage:")
         try:
             # resolve to default if no value given
@@ -704,29 +704,29 @@ class neMESYSClient(SiLA2Client):
                 parameter = PumpFluidDosingService_pb2.StopDosage_Parameters(
                     **PumpFluidDosingService_default_dict['StopDosage_Parameters']
                 )
-    
+
             response = self.PumpFluidDosingService_stub.StopDosage(parameter)
-    
+
             logging.debug('StopDosage response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def SetSyringeParameters(self,
                       parameter: SyringeConfigurationController_pb2.SetSyringeParameters_Parameters = None) \
             -> SyringeConfigurationController_pb2.SetSyringeParameters_Responses:
         """
         Wrapper to call the unobservable command SetSyringeParameters on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A gRPC object with the response that has been defined for this command.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling SetSyringeParameters:")
         try:
             # resolve to default if no value given
@@ -735,29 +735,29 @@ class neMESYSClient(SiLA2Client):
                 parameter = SyringeConfigurationController_pb2.SetSyringeParameters_Parameters(
                     **SyringeConfigurationController_default_dict['SetSyringeParameters_Parameters']
                 )
-    
+
             response = self.SyringeConfigurationController_stub.SetSyringeParameters(parameter)
-    
+
             logging.debug('SetSyringeParameters response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def SwitchToPosition(self,
                       parameter: ValvePositionController_pb2.SwitchToPosition_Parameters = None) \
             -> ValvePositionController_pb2.SwitchToPosition_Responses:
         """
         Wrapper to call the unobservable command SwitchToPosition on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A gRPC object with the response that has been defined for this command.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling SwitchToPosition:")
         try:
             # resolve to default if no value given
@@ -766,29 +766,29 @@ class neMESYSClient(SiLA2Client):
                 parameter = ValvePositionController_pb2.SwitchToPosition_Parameters(
                     **ValvePositionController_default_dict['SwitchToPosition_Parameters']
                 )
-    
+
             response = self.ValvePositionController_stub.SwitchToPosition(parameter)
-    
+
             logging.debug('SwitchToPosition response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def TogglePosition(self,
                       parameter: ValvePositionController_pb2.TogglePosition_Parameters = None) \
             -> ValvePositionController_pb2.TogglePosition_Responses:
         """
         Wrapper to call the unobservable command TogglePosition on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A gRPC object with the response that has been defined for this command.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling TogglePosition:")
         try:
             # resolve to default if no value given
@@ -797,31 +797,31 @@ class neMESYSClient(SiLA2Client):
                 parameter = ValvePositionController_pb2.TogglePosition_Parameters(
                     **ValvePositionController_default_dict['TogglePosition_Parameters']
                 )
-    
+
             response = self.ValvePositionController_stub.TogglePosition(parameter)
-    
+
             logging.debug('TogglePosition response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def Shutdown(self,
                       parameter: ShutdownController_pb2.Shutdown_Parameters = None) \
             -> silaFW_pb2.CommandConfirmation:
         """
         Wrapper to call the observable command Shutdown on the server.
-    
+
         :param parameter: The parameter gRPC construct required for this command.
-    
+
         :returns: A command confirmation object with the following information:
             commandExecutionUUID: A command id with which this observable command can be referenced in future calls
             lifetimeOfExecution (optional): The (maximum) lifetime of this command call.
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Calling Shutdown:")
         try:
             # resolve to default if no value given
@@ -830,25 +830,25 @@ class neMESYSClient(SiLA2Client):
                 parameter = ShutdownController_pb2.Shutdown_Parameters(
                     **ShutdownController_default_dict['Shutdown_Parameters']
                 )
-    
+
             response = self.ShutdownController_stub.Shutdown(parameter)
-    
+
             logging.debug('Shutdown response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def Shutdown_Info(self,
                            uuid: Union[str, silaFW_pb2.CommandExecutionUUID]) \
             -> silaFW_pb2.ExecutionInfo:
         """
         Wrapper to get an intermediate response for the observable command Shutdown on the server.
-    
+
         :param uuid: The UUID that has been returned with the first command call. Can be given as string or as the
                      corresponding SiLA2 gRPC object.
-    
+
         :returns: A gRPC object with the status information that has been defined for this command. The following fields
                   are defined:
                     * *commandStatus*: Status of the command (enumeration)
@@ -858,10 +858,10 @@ class neMESYSClient(SiLA2Client):
         """
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         if type(uuid) is str:
             uuid = silaFW_pb2.CommandExecutionUUID(value=uuid)
-    
+
         logging.debug(
             "Requesting status information for command Shutdown (UUID={uuid}):".format(
                 uuid=uuid.value
@@ -873,48 +873,48 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
     def Shutdown_Result(self,
                              uuid: Union[str, silaFW_pb2.CommandExecutionUUID]) \
             -> ShutdownController_pb2.Shutdown_Responses:
         """
         Wrapper to get an intermediate response for the observable command Shutdown on the server.
-    
+
         :param uuid: The UUID that has been returned with the first command call. Can be given as string or as the
                      corresponding SiLA2 gRPC object.
-    
+
         :returns: A gRPC object with the result response that has been defined for this command.
-    
+
         .. note:: Whether the result is available or not can and should be evaluated by calling the
                   :meth:`Shutdown_Info` method of this call.
         """
         if type(uuid) is str:
             uuid = silaFW_pb2.CommandExecutionUUID(value=uuid)
-    
+
         logging.debug(
             "Requesting status information for command Shutdown (UUID={uuid}):".format(
                 uuid=uuid.value
             )
         )
-    
+
         try:
             response = self.ShutdownController_stub.Shutdown_Result(uuid)
             logging.debug('Shutdown result response: {response}'.format(response=response))
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
 
     def Subscribe_PumpDriveState(self) \
             -> PumpDriveControlService_pb2.Subscribe_PumpDriveState_Responses:
         """Wrapper to get property PumpDriveState from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property PumpDriveState:")
         try:
             response = self.PumpDriveControlService_stub.Subscribe_PumpDriveState(
@@ -928,14 +928,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Subscribe_FaultState(self) \
             -> PumpDriveControlService_pb2.Subscribe_FaultState_Responses:
         """Wrapper to get property FaultState from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property FaultState:")
         try:
             response = self.PumpDriveControlService_stub.Subscribe_FaultState(
@@ -949,14 +949,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Subscribe_FlowUnit(self) \
             -> PumpUnitController_pb2.Subscribe_FlowUnit_Responses:
         """Wrapper to get property FlowUnit from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property FlowUnit:")
         try:
             response = self.PumpUnitController_stub.Subscribe_FlowUnit(
@@ -970,14 +970,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Subscribe_VolumeUnit(self) \
             -> PumpUnitController_pb2.Subscribe_VolumeUnit_Responses:
         """Wrapper to get property VolumeUnit from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property VolumeUnit:")
         try:
             response = self.PumpUnitController_stub.Subscribe_VolumeUnit(
@@ -991,14 +991,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Subscribe_MaxSyringeFillLevel(self) \
             -> PumpFluidDosingService_pb2.Subscribe_MaxSyringeFillLevel_Responses:
         """Wrapper to get property MaxSyringeFillLevel from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property MaxSyringeFillLevel:")
         try:
             response = self.PumpFluidDosingService_stub.Subscribe_MaxSyringeFillLevel(
@@ -1012,14 +1012,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Subscribe_SyringeFillLevel(self) \
             -> PumpFluidDosingService_pb2.Subscribe_SyringeFillLevel_Responses:
         """Wrapper to get property SyringeFillLevel from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property SyringeFillLevel:")
         try:
             response = self.PumpFluidDosingService_stub.Subscribe_SyringeFillLevel(
@@ -1033,14 +1033,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Subscribe_MaxFlowRate(self) \
             -> PumpFluidDosingService_pb2.Subscribe_MaxFlowRate_Responses:
         """Wrapper to get property MaxFlowRate from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property MaxFlowRate:")
         try:
             response = self.PumpFluidDosingService_stub.Subscribe_MaxFlowRate(
@@ -1054,14 +1054,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Subscribe_FlowRate(self) \
             -> PumpFluidDosingService_pb2.Subscribe_FlowRate_Responses:
         """Wrapper to get property FlowRate from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property FlowRate:")
         try:
             response = self.PumpFluidDosingService_stub.Subscribe_FlowRate(
@@ -1075,14 +1075,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Subscribe_InnerDiameter(self) \
             -> SyringeConfigurationController_pb2.Subscribe_InnerDiameter_Responses:
         """Wrapper to get property InnerDiameter from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property InnerDiameter:")
         try:
             response = self.SyringeConfigurationController_stub.Subscribe_InnerDiameter(
@@ -1096,14 +1096,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Subscribe_MaxPistonStroke(self) \
             -> SyringeConfigurationController_pb2.Subscribe_MaxPistonStroke_Responses:
         """Wrapper to get property MaxPistonStroke from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property MaxPistonStroke:")
         try:
             response = self.SyringeConfigurationController_stub.Subscribe_MaxPistonStroke(
@@ -1117,14 +1117,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Get_NumberOfPositions(self) \
             -> ValvePositionController_pb2.Get_NumberOfPositions_Responses:
         """Wrapper to get property NumberOfPositions from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading unobservable property NumberOfPositions:")
         try:
             response = self.ValvePositionController_stub.Get_NumberOfPositions(
@@ -1138,14 +1138,14 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
     def Subscribe_Position(self) \
             -> ValvePositionController_pb2.Subscribe_Position_Responses:
         """Wrapper to get property Position from the server."""
         # noinspection PyUnusedLocal - type definition, just for convenience
         grpc_err: grpc.Call
-    
+
         logging.debug("Reading observable property Position:")
         try:
             response = self.ValvePositionController_stub.Subscribe_Position(
@@ -1159,9 +1159,9 @@ class neMESYSClient(SiLA2Client):
         except grpc.RpcError as grpc_err:
             self.grpc_error_handling(grpc_err)
             return None
-    
+
         return response
-    
+
 
     @staticmethod
     def grpc_error_handling(error_object: grpc.Call) -> None:
@@ -1180,14 +1180,14 @@ def parse_command_line():
     """
     parser = argparse.ArgumentParser(description="A SiLA2 client: neMESYS")
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
-    
+
     return parser.parse_args()
 
 
 if __name__ == '__main__':
     # or use logging.INFO (=20) or logging.ERROR (=30) for less output
     logging.basicConfig(format='%(levelname)-8s| %(module)s.%(funcName)s: %(message)s', level=logging.DEBUG)
-    
+
     parsed_args = parse_command_line()
 
     # start the server

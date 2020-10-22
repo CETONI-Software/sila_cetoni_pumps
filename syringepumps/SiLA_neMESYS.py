@@ -26,6 +26,7 @@ ________________________________________________________________________
 
 __version__ = "0.0.1"
 
+from sys import stderr
 import time
 import argparse
 import logging
@@ -35,8 +36,10 @@ except ModuleNotFoundError:
     print("Cannot find coloredlogs! Please install coloredlogs, if you'd like to have nicer logging output:")
     print("`pip install coloredlogs`")
 
+print("This file is about to be deprecated! It might not work as expected and is not guaranteed to work at all.", file=stderr)
+
 # import neMESYS server
-from neMESYS_server import neMESYSServer
+from .neMESYS_server import neMESYSServer
 
 # import qmixsdk
 from qmixsdk import qmixbus
