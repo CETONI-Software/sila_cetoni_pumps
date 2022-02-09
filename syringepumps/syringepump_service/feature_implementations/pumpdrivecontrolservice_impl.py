@@ -126,6 +126,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
     def EnablePumpDrive(self, *, metadata: Dict[FullyQualifiedIdentifier, Any]) -> EnablePumpDrive_Responses:
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(PumpDriveControlServiceFeature["EnablePumpDrive"])
+        self.__pump.clear_fault()
         self.__pump.enable(True)
 
     def DisablePumpDrive(self, *, metadata: Dict[FullyQualifiedIdentifier, Any]) -> DisablePumpDrive_Responses:
