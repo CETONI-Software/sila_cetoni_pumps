@@ -47,7 +47,7 @@
   <Property>
     <Identifier>PumpDriveState</Identifier>
     <DisplayName>Pump Drive State</DisplayName>
-    <Description>The current state of the pump. This is either 'Enabled' or 'Disabled'. Only if the sate is 'Enabled', the pump can dose fluids.</Description>
+    <Description>The current state of the pump. This is either 'Enabled', 'Disabled', or 'Initializing'. Only if the sate is 'Enabled', the pump can dose fluids.</Description>
     <Observable>Yes</Observable>
     <DataType>
       <Constrained>
@@ -58,6 +58,7 @@
           <Set>
             <Value>Enabled</Value>
             <Value>Disabled</Value>
+            <Value>Initializing</Value>
           </Set>
         </Constraints>
       </Constrained>

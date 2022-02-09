@@ -42,7 +42,7 @@ class SystemNotOperationalError(UndefinedExecutionError):
 
 class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
     __pump: Pump
-    __initializing: bool
+    __is_initializing: bool
     __system: ApplicationSystem
     __config: Config
     __stop_event: Event
@@ -52,7 +52,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
     def __init__(self, pump: Pump, executor: Executor):
         super().__init__()
         self.__pump = pump
-        self.__initializing = False
+        self.__is_initializing = False
         self.__system = ApplicationSystem()
         self.__config = Config(self.__pump.get_pump_name())
         self.__stop_event = Event()
@@ -71,11 +71,16 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
 
         def update_pump_drive_state(stop_event: Event):
             new_is_enabled = is_enabled = self.__pump.is_enabled() and self.__system.state.is_operational()
+            new_is_initializing = is_initializing = self.__is_initializing
             while not stop_event.is_set():
                 new_is_enabled = self.__pump.is_enabled() and self.__system.state.is_operational()
-                if new_is_enabled != is_enabled:
+                new_is_initializing = self.__is_initializing
+                if new_is_enabled != is_enabled or new_is_initializing != is_initializing:
                     is_enabled = new_is_enabled
-                    self.update_PumpDriveState("Enabled" if is_enabled else "Disabled")
+                    is_initializing = new_is_initializing
+                    self.update_PumpDriveState(
+                        "Initializing" if is_initializing else "Enabled" if is_enabled else "Disabled"
+                    )
                 time.sleep(0.1)
 
         def update_drive_position_counter(stop_event: Event):
@@ -147,7 +152,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(PumpDriveControlServiceFeature["InitializePumpDrive"])
 
-        if self.__initializing:
+        if self.__is_initializing:
             raise InitializationNotFinished()
 
         # send first info immediately
@@ -155,7 +160,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         instance.progress = 0
         instance.estimated_remaining_time = self.__CALIBRATION_TIMEOUT
 
-        self.__initializing = True
+        self.__is_initializing = True
         self.__pump.calibrate()
         time.sleep(0.2)
 
@@ -187,7 +192,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         instance.progress = 1
         instance.estimated_remaining_time = datetime.timedelta(0)
 
-        self.__initializing = False
+        self.__is_initializing = False
 
         logging.info("Pump calibrated: %s", calibration_finished)
         last_error = self.__pump.read_last_error()
