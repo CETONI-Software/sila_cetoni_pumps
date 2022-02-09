@@ -164,11 +164,11 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         self.__pump.calibrate()
         time.sleep(0.2)
 
-        calibration_finished = self.__pump.is_calibration_finished()
+        calibration_finished = self.__pump.is_calibration_finished() or not self.__pump.is_enabled()
         if calibration_finished:
             instance.status = CommandExecutionStatus.finishedSuccessfully
             instance.progress = 1
-            instance.estimated_remaining_time = 0
+            instance.estimated_remaining_time = datetime.timedelta(0)
 
         timeout: datetime.timedelta = self.__CALIBRATION_TIMEOUT
         timer = PollingTimer(timeout.seconds * 1000)
