@@ -161,7 +161,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         is_pumping = True
         POLLING_TIMEOUT = datetime.timedelta(seconds=0.1)
         while is_pumping and not timer.is_expired():
-            time.sleep(POLLING_TIMEOUT.seconds)
+            time.sleep(POLLING_TIMEOUT.total_seconds())
             dosing_time -= POLLING_TIMEOUT
             if message_timer.is_expired():
                 logging.info("Fill level: %s", self.__pump.get_fill_level())
