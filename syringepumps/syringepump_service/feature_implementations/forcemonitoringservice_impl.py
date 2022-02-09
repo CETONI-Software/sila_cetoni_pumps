@@ -86,7 +86,7 @@ class ForceMonitoringServiceImpl(ForceMonitoringServiceBase):
             new_force = force = self.__pump.read_force_sensor()
             while not stop_event.is_set():
                 new_force = self.__pump.read_force_sensor()
-                if not math.isclose(new_force, force):
+                if not math.isclose(new_force, force, abs_tol=1.0e-3):
                     force = new_force
                     self.update_ForceSensorValue(force)
                 time.sleep(0.1)
