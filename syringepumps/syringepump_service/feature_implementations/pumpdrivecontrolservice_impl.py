@@ -180,7 +180,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
             timeout -= POLLING_TIMEOUT
             if message_timer.is_expired():
                 instance.status = CommandExecutionStatus.running
-                instance.progress = 100 * (self.__CALIBRATION_TIMEOUT - timeout) / self.__CALIBRATION_TIMEOUT
+                instance.progress = (self.__CALIBRATION_TIMEOUT - timeout) / self.__CALIBRATION_TIMEOUT
                 instance.estimated_remaining_time = timeout
                 message_timer.restart()
             calibration_finished = self.__pump.is_calibration_finished()
