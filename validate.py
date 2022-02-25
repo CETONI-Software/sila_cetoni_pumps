@@ -30,8 +30,10 @@ def validate(
     max_fill_level = pump.get_volume_max()
     max_flow_rate = pump.get_flow_rate_max()
 
-    msg = "The requested {param} ({requested_val} {unit}) has to be in the range \
-        between 0 {unit} {exclusive} and {max_val} {unit} for this pump."
+    msg = (
+        "The requested {param} ({requested_val} {unit}) has to be in the range between 0 {unit} {exclusive} and "
+        "{max_val} {unit} for this pump."
+    )
     if flow_rate <= 0 or flow_rate > max_flow_rate:
         unit = uc.flow_unit_to_string(pump.get_flow_unit())
         raise ValidationError(
