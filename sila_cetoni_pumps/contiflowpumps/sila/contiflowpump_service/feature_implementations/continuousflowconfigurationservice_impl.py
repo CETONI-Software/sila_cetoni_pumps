@@ -94,11 +94,7 @@ class ContinuousFlowConfigurationServiceImpl(ContinuousFlowConfigurationServiceB
         self.update_MinFlowRate(self.__pump.get_device_property(ContiFlowProperty.MIN_PUMP_FLOW))
         self.update_OverlapDuration(self.__pump.get_device_property(ContiFlowProperty.OVERLAP_DURATION_S))
         self.update_RefillFlowRate(self.__pump.get_device_property(ContiFlowProperty.REFILL_FLOW))
-        self.update_SwitchingMode(
-            invert_dict(self.__ALLOWED_SWITCHING_MODES).get(
-                self.__pump.get_device_property(ContiFlowProperty.SWITCHING_MODE)
-            )
-        )
+        self.update_SwitchingMode(invert_dict(self.__ALLOWED_SWITCHING_MODES).get(ContiFlowProperty.SWITCHING_MODE))
 
         executor.submit(update_cross_flow_duration, self.__stop_event)
         executor.submit(update_max_refill_flow, self.__stop_event)
