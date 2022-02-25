@@ -10,7 +10,6 @@ from qmixsdk.qmixpump import ContiFlowProperty, ContiFlowPump, ContiFlowSwitchin
 from sila2.framework import FullyQualifiedIdentifier
 from sila2.framework.errors.validation_error import ValidationError
 
-from .....util import invert_dict
 from ..generated.continuousflowconfigurationservice import (
     ContinuousFlowConfigurationServiceBase,
     ContinuousFlowConfigurationServiceFeature,
@@ -19,6 +18,9 @@ from ..generated.continuousflowconfigurationservice import (
     SetRefillFlowRate_Responses,
     SetSwitchingMode_Responses,
 )
+
+def invert_dict(d: dict) -> dict:
+    return dict([(v, k) for k, v in d.items()])
 
 
 class ContinuousFlowConfigurationServiceImpl(ContinuousFlowConfigurationServiceBase):
