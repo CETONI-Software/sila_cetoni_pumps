@@ -15,8 +15,9 @@ from sila2.framework.command.execution_info import CommandExecutionStatus
 from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 from sila2.server import ObservableCommandInstance
 
-from .....application.config import Config
-from .....application.system import ApplicationSystem
+from sila_cetoni.application.config import Config
+from sila_cetoni.application.system import ApplicationSystem
+
 from ..generated.pumpdrivecontrolservice import (
     DisablePumpDrive_Responses,
     EnablePumpDrive_Responses,

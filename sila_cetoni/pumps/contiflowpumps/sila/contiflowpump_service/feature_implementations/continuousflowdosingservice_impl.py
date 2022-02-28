@@ -11,7 +11,7 @@ from sila2.framework import CommandExecutionStatus, FullyQualifiedIdentifier
 from sila2.framework.errors.validation_error import ValidationError
 from sila2.server import ObservableCommandInstance
 
-from ....validate import validate
+from .....validate import validate
 from ..generated.continuousflowdosingservice import (
     ContinuousFlowDosingServiceBase,
     ContinuousFlowDosingServiceFeature,

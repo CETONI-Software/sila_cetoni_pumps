@@ -10,7 +10,8 @@ from qmixsdk.qmixpump import Pump
 from sila2.framework import Command, FullyQualifiedIdentifier, Property
 from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 
-from .....application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem
+
 from ..generated.forcemonitoringservice import (
     ClearForceSafetyStop_Responses,
     DisableForceMonitoring_Responses,

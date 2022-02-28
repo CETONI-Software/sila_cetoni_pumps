@@ -12,8 +12,9 @@ from sila2.framework import Command, FullyQualifiedIdentifier, Property
 from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 from sila2.framework.errors.validation_error import ValidationError
 
-from .....application.system import ApplicationSystem
-from .... import unit_conversion as uc
+from sila_cetoni.application.system import ApplicationSystem
+
+from ..... import unit_conversion as uc
 from ..generated.pumpunitcontroller import (
     PumpUnitControllerBase,
     PumpUnitControllerFeature,

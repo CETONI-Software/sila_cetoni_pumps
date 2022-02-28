@@ -18,8 +18,9 @@ from sila2.framework.errors.undefined_execution_error import UndefinedExecutionE
 from sila2.framework.errors.validation_error import ValidationError
 from sila2.server import ObservableCommandInstance
 
-from .....application.system import ApplicationSystem
-from ....validate import validate
+from sila_cetoni.application.system import ApplicationSystem
+
+from .....validate import validate
 from ..generated.pumpfluiddosingservice import (
     DoseVolume_Responses,
     GenerateFlow_Responses,
