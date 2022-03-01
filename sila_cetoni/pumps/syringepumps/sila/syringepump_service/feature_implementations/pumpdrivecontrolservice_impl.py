@@ -30,6 +30,8 @@ from ..generated.pumpdrivecontrolservice import (
     RestoreDrivePositionCounter_Responses,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class SystemNotOperationalError(UndefinedExecutionError):
     def __init__(self, command_or_property: Union[Command, Property]):
@@ -112,10 +114,10 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         """
         drive_pos_counter = self.__config.pump_drive_position_counter
         if drive_pos_counter is not None:
-            logging.debug(f"Restoring drive position counter: {drive_pos_counter}")
+            logger.debug(f"Restoring drive position counter: {drive_pos_counter}")
             self.__pump.restore_position_counter_value(drive_pos_counter)
         else:
-            logging.warning(
+            logger.warning(
                 f"Could not read drive position counter for {self.__pump.get_pump_name()} from config file. "
                 "Reference move needed!"
             )
@@ -190,13 +192,13 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
             instance.status = CommandExecutionStatus.finishedSuccessfully
         else:
             instance.status = CommandExecutionStatus.finishedWithError
-            logging.error("An unexpected error occurred: %s", self.__pump.read_last_error())
+            logger.error("An unexpected error occurred: %s", self.__pump.read_last_error())
         instance.progress = 1
         instance.estimated_remaining_time = datetime.timedelta(0)
 
         self.__is_initializing = False
 
-        logging.info("Pump calibrated: %s", calibration_finished)
+        logger.info("Pump calibrated: %s", calibration_finished)
         last_error = self.__pump.read_last_error()
         if not calibration_finished and last_error.code != 0:
             raise InitializationFailed(

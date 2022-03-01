@@ -23,6 +23,8 @@ from ..generated.pumpunitcontroller import (
     VolumeUnit,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class SystemNotOperationalError(UndefinedExecutionError):
     def __init__(self, command_or_property: Union[Command, Property]):
@@ -79,7 +81,7 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(PumpUnitControllerFeature["SetFlowUnit"])
 
-        logging.debug(f"flow unit {FlowUnit} {type(FlowUnit)}")
+        logger.debug(f"flow unit {FlowUnit} {type(FlowUnit)}")
 
         # try:
         flow_unit = FlowUnit

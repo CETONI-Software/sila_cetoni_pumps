@@ -30,6 +30,8 @@ from ..generated.pumpfluiddosingservice import (
     StopDosage_Responses,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class SystemNotOperationalError(UndefinedExecutionError):
     def __init__(self, command_or_property: Union[Command, Property]):
@@ -137,7 +139,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             instance.progress = 1
 
         target_volume = self.__pump.get_target_volume()
-        logging.debug("target volume: %f, current volume: %f", target_volume, self.__pump.get_fill_level())
+        logger.debug("target volume: %f, current volume: %f", target_volume, self.__pump.get_fill_level())
         flow_in_sec = self.__pump.get_flow_is() / self.__pump.get_flow_unit().time_unitid.value
         if flow_in_sec == 0:
             # try again, maybe the pump didn't start pumping yet
@@ -146,12 +148,12 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         if flow_in_sec == 0:
             instance.status = CommandExecutionStatus.finishedWithError
             instance.progress = 1
-            logging.error("The pump didn't start pumping. Last error: %s", self.__pump.read_last_error())
+            logger.error("The pump didn't start pumping. Last error: %s", self.__pump.read_last_error())
             return
 
-        logging.debug("flow_in_sec: %f", flow_in_sec)
+        logger.debug("flow_in_sec: %f", flow_in_sec)
         dosing_time = datetime.timedelta(seconds=self.__pump.get_target_volume() / flow_in_sec + 2)  # +2 sec buffer
-        logging.debug("dosing_time_s: %fs", dosing_time.seconds)
+        logger.debug("dosing_time_s: %fs", dosing_time.seconds)
         # send first info immediately
         instance.status = CommandExecutionStatus.running
         instance.progress = 0
@@ -165,7 +167,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             time.sleep(POLLING_TIMEOUT.total_seconds())
             dosing_time -= POLLING_TIMEOUT
             if message_timer.is_expired():
-                logging.info("Fill level: %s", self.__pump.get_fill_level())
+                logger.info("Fill level: %s", self.__pump.get_fill_level())
                 instance.status = CommandExecutionStatus.running
                 instance.progress = self.__pump.get_dosed_volume() / target_volume
                 instance.estimated_remaining_time = dosing_time
@@ -180,7 +182,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             instance.status = CommandExecutionStatus.finishedWithError
             instance.progress = 1
             instance.estimated_remaining_time = datetime.timedelta(0)
-            logging.error("An unexpected error occurred: %s", self.__pump.read_last_error())
+            logger.error("An unexpected error occurred: %s", self.__pump.read_last_error())
 
     def SetFillLevel(
         self,
