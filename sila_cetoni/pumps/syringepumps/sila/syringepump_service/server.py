@@ -56,9 +56,12 @@ class Server(IOServer):
             self.syringeconfigurationcontroller = SyringeConfigurationControllerImpl(pump, self.child_task_executor)
             self.set_feature_implementation(SyringeConfigurationControllerFeature, self.syringeconfigurationcontroller)
 
-            if pump.has_force_monitoring():
-                self.forcemonitoringservice = ForceMonitoringServiceImpl(pump, self.child_task_executor)
-                self.set_feature_implementation(ForceMonitoringServiceFeature, self.forcemonitoringservice)
+            try:
+                if pump.has_force_monitoring():
+                    self.forcemonitoringservice = ForceMonitoringServiceImpl(pump, self.child_task_executor)
+                    self.set_feature_implementation(ForceMonitoringServiceFeature, self.forcemonitoringservice)
+            except AttributeError:
+                pass
 
             self.pumpfluiddosingservice = PumpFluidDosingServiceImpl(pump, self.child_task_executor)
             self.set_feature_implementation(PumpFluidDosingServiceFeature, self.pumpfluiddosingservice)
