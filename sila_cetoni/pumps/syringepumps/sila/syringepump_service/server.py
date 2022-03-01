@@ -4,9 +4,12 @@ from uuid import UUID
 from qmixsdk.qmixpump import ContiFlowPump, Pump
 from qmixsdk.qmixvalve import Valve
 
-from ....io.io_service.server import Server as IOServer
-from ....valves.valve_service.feature_implementations.valvepositioncontroller_impl import ValvePositionControllerImpl
-from ....valves.valve_service.generated.valvepositioncontroller import ValvePositionControllerFeature
+from sila_cetoni.io.sila.io_service.server import Server as IOServer
+from sila_cetoni.valves.sila.valve_service.feature_implementations.valvepositioncontroller_impl import (
+    ValvePositionControllerImpl,
+)
+from sila_cetoni.valves.sila.valve_service.generated.valvepositioncontroller import ValvePositionControllerFeature
+
 from .feature_implementations.forcemonitoringservice_impl import ForceMonitoringServiceImpl
 from .feature_implementations.pumpdrivecontrolservice_impl import PumpDriveControlServiceImpl
 from .feature_implementations.pumpfluiddosingservice_impl import PumpFluidDosingServiceImpl

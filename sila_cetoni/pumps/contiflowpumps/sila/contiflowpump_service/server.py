@@ -3,7 +3,8 @@ from uuid import UUID
 
 from qmixsdk.qmixpump import ContiFlowPump
 
-from ...syringepumps.syringepump_service.server import Server as SyringePumpServer
+from sila_cetoni.pumps.syringepumps.sila.syringepump_service.server import Server as SyringePumpServer
+
 from .feature_implementations.continuousflowconfigurationservice_impl import ContinuousFlowConfigurationServiceImpl
 from .feature_implementations.continuousflowdosingservice_impl import ContinuousFlowDosingServiceImpl
 from .feature_implementations.continuousflowinitializationcontroller_impl import (
