@@ -7,6 +7,6 @@ Run `python -m sila_cetoni_pumps --help` to receive a full list of available opt
 
 ## Code generation
 ```console
-$ python -m sila2.code_generator new-package -n syringepump_service -o ./sila_cetoni_pumps/syringepumps/sila ../../features/de/cetoni/pumps/syringepumps/*.sila.xml
-$ python -m sila2.code_generator new-package -n contiflowpump_service -o ./sila_cetoni_pumps/contiflowpumps/sila ../../features/de/cetoni/pumps/contiflowpumps/*.sila.xml
+$ python -m sila2.code_generator new-package -n syringepump_service -o ./sila_cetoni/pumps/syringepumps/sila ./sila_cetoni/pumps/syringepumps/features*.sila.xml
+$ python -m sila2.code_generator new-package -n contiflowpump_service -o ./sila_cetoni/pumps/contiflowpumps/sila ./sila_cetoni/pumps/contiflowpumps/features*.sila.xml
 ```
