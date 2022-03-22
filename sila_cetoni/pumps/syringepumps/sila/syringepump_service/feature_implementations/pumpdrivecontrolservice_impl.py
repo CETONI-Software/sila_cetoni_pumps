@@ -60,7 +60,8 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         self.__config = Config(self.__pump.get_pump_name())
         self.__stop_event = Event()
 
-        self._restore_last_drive_position_counter()
+        if not self.__pump.is_position_sensing_initialized:
+            self._restore_last_drive_position_counter()
 
         def update_fault_state(stop_event: Event):
             new_fault_state = fault_state = self.__pump.is_in_fault_state()
