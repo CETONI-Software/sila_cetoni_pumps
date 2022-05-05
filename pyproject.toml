@@ -18,10 +18,14 @@ classifiers = [
 
 requires-python = ">=3.7"
 dependencies = [
-    "black",
     "coloredlogs",
-    "isort",
     "sila2==0.5.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "isort",
 ]
 
 [project.scripts]
