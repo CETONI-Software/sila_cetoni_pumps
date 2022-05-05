@@ -1,3 +1,42 @@
+[project]
+name = "sila_cetoni_pumps"
+version = "1.0.0"
+description = "SiLA 2 implementations for CETONI Pump devices"
+readme = "README.md"
+authors = [
+    { name = "CETONI GmbH", email = "info@cetoni.de" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+
+requires-python = ">=3.7"
+dependencies = [
+    "black",
+    "coloredlogs",
+    "isort",
+    "sila2==0.5.5",
+]
+
+[project.scripts]
+sila-cetoni = "sila_cetoni.pumps:main"
+
+[project.urls]
+"Homepage" = "https://cetoni.de/cobomation/#sila"
+"SiLA Standard" = "https://sila-standard.org"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.package-data]
+"*" = ["*.sila.xml"]
+
 [build-system]
 requires = [
     "setuptools>=42",
