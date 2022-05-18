@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+import "SiLAFramework.proto";
+
+package sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1;
+
+/* Functionality to control the force monitoring, read the force sensor and set a custom force limit for pump devices that support this functionality such as Nemesys S and Nemesys M. */
+service ForceMonitoringService {
+  /* Clear/acknowledge a force safety stop. */
+  rpc ClearForceSafetyStop (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.ClearForceSafetyStop_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.ClearForceSafetyStop_Responses) {}
+  /* Enable the force monitoring. */
+  rpc EnableForceMonitoring (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.EnableForceMonitoring_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.EnableForceMonitoring_Responses) {}
+  /* Disable the force monitoring. */
+  rpc DisableForceMonitoring (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.DisableForceMonitoring_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.DisableForceMonitoring_Responses) {}
+  /* Set a custom limit. */
+  rpc SetForceLimit (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.SetForceLimit_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.SetForceLimit_Responses) {}
+  /* The currently measured force as read by the force sensor. */
+  rpc Subscribe_ForceSensorValue (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.Subscribe_ForceSensorValue_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.Subscribe_ForceSensorValue_Responses) {}
+  /* The current force limit. */
+  rpc Subscribe_ForceLimit (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.Subscribe_ForceLimit_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.Subscribe_ForceLimit_Responses) {}
+  /* The maximum device force (i.e. the maximum force the pump hardware can take in continuous operation). */
+  rpc Subscribe_MaxDeviceForce (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.Subscribe_MaxDeviceForce_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.Subscribe_MaxDeviceForce_Responses) {}
+  /* Whether force monitoring is enabled. */
+  rpc Subscribe_ForceMonitoringEnabled (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.Subscribe_ForceMonitoringEnabled_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.Subscribe_ForceMonitoringEnabled_Responses) {}
+  /* Whether force safety stop is active. */
+  rpc Subscribe_ForceSafetyStopActive (sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.Subscribe_ForceSafetyStopActive_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.Subscribe_ForceSafetyStopActive_Responses) {}
+}
+
+/* The force unit used force monitoring related functions. */
+message DataType_Force {
+  sila2.org.silastandard.Real Force = 1;  /* The force unit used force monitoring related functions. */
+}
+
+/* Parameters for ClearForceSafetyStop */
+message ClearForceSafetyStop_Parameters {
+}
+
+/* Responses of ClearForceSafetyStop */
+message ClearForceSafetyStop_Responses {
+}
+
+/* Parameters for EnableForceMonitoring */
+message EnableForceMonitoring_Parameters {
+}
+
+/* Responses of EnableForceMonitoring */
+message EnableForceMonitoring_Responses {
+}
+
+/* Parameters for DisableForceMonitoring */
+message DisableForceMonitoring_Parameters {
+}
+
+/* Responses of DisableForceMonitoring */
+message DisableForceMonitoring_Responses {
+}
+
+/* Parameters for SetForceLimit */
+message SetForceLimit_Parameters {
+  sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.DataType_Force ForceLimit = 1;  /* The force limit to set. If higher than MaxDeviceForce, MaxDeviceForce will be used instead. */
+}
+
+/* Responses of SetForceLimit */
+message SetForceLimit_Responses {
+}
+
+/* Parameters for ForceSensorValue */
+message Subscribe_ForceSensorValue_Parameters {
+}
+
+/* Responses of ForceSensorValue */
+message Subscribe_ForceSensorValue_Responses {
+  sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.DataType_Force ForceSensorValue = 1;  /* The currently measured force as read by the force sensor. */
+}
+
+/* Parameters for ForceLimit */
+message Subscribe_ForceLimit_Parameters {
+}
+
+/* Responses of ForceLimit */
+message Subscribe_ForceLimit_Responses {
+  sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.DataType_Force ForceLimit = 1;  /* The current force limit. */
+}
+
+/* Parameters for MaxDeviceForce */
+message Subscribe_MaxDeviceForce_Parameters {
+}
+
+/* Responses of MaxDeviceForce */
+message Subscribe_MaxDeviceForce_Responses {
+  sila2.de.cetoni.pumps.syringepumps.forcemonitoringservice.v1.DataType_Force MaxDeviceForce = 1;  /* The maximum device force (i.e. the maximum force the pump hardware can take in continuous operation). */
+}
+
+/* Parameters for ForceMonitoringEnabled */
+message Subscribe_ForceMonitoringEnabled_Parameters {
+}
+
+/* Responses of ForceMonitoringEnabled */
+message Subscribe_ForceMonitoringEnabled_Responses {
+  sila2.org.silastandard.Boolean ForceMonitoringEnabled = 1;  /* Whether force monitoring is enabled. */
+}
+
+/* Parameters for ForceSafetyStopActive */
+message Subscribe_ForceSafetyStopActive_Parameters {
+}
+
+/* Responses of ForceSafetyStopActive */
+message Subscribe_ForceSafetyStopActive_Responses {
+  sila2.org.silastandard.Boolean ForceSafetyStopActive = 1;  /* Whether force safety stop is active. */
+}

@@ -9,6 +9,7 @@ from typing import Any, Dict, Union
 from qmixsdk.qmixpump import Pump
 from sila2.framework import Command, FullyQualifiedIdentifier, Property
 from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
+from sila2.server import MetadataDict, SilaServer
 
 from sila_cetoni.application.system import ApplicationSystem
 
@@ -50,8 +51,8 @@ class ForceMonitoringServiceImpl(ForceMonitoringServiceBase):
     __system: ApplicationSystem
     __stop_event: Event
 
-    def __init__(self, pump: Pump, executor: Executor):
-        super().__init__()
+    def __init__(self, server: SilaServer, pump: Pump, executor: Executor):
+        super().__init__(server)
         self.__pump = pump
         self.__system = ApplicationSystem()
         self.__stop_event = Event()
@@ -115,31 +116,25 @@ class ForceMonitoringServiceImpl(ForceMonitoringServiceBase):
         executor.submit(update_max_device_force, self.__stop_event)
 
     @requires_operational_system
-    def ClearForceSafetyStop(self, *, metadata: Dict[FullyQualifiedIdentifier, Any]) -> ClearForceSafetyStop_Responses:
+    def ClearForceSafetyStop(self, *, metadata: MetadataDict) -> ClearForceSafetyStop_Responses:
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(ForceMonitoringServiceFeature["ClearForceSafetyStop"])
         self.__pump.clear_force_safety_stop()
 
     @requires_operational_system
-    def EnableForceMonitoring(
-        self, *, metadata: Dict[FullyQualifiedIdentifier, Any]
-    ) -> EnableForceMonitoring_Responses:
+    def EnableForceMonitoring(self, *, metadata: MetadataDict) -> EnableForceMonitoring_Responses:
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(ForceMonitoringServiceFeature["EnableForceMonitoring"])
         self.__pump.enable_force_monitoring(True)
 
     @requires_operational_system
-    def DisableForceMonitoring(
-        self, *, metadata: Dict[FullyQualifiedIdentifier, Any]
-    ) -> DisableForceMonitoring_Responses:
+    def DisableForceMonitoring(self, *, metadata: MetadataDict) -> DisableForceMonitoring_Responses:
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(ForceMonitoringServiceFeature["DisableForceMonitoring"])
         self.__pump.enable_force_monitoring(False)
 
     @requires_operational_system
-    def SetForceLimit(
-        self, ForceLimit: Force, *, metadata: Dict[FullyQualifiedIdentifier, Any]
-    ) -> SetForceLimit_Responses:
+    def SetForceLimit(self, ForceLimit: Force, *, metadata: MetadataDict) -> SetForceLimit_Responses:
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(ForceMonitoringServiceFeature["SetForceLimit"])
         self.__pump.write_force_limit(Force)

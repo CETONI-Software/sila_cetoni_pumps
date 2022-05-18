@@ -10,7 +10,7 @@ from qmixsdk.qmixbus import PollingTimer
 from qmixsdk.qmixpump import ContiFlowPump
 from sila2.framework import CommandExecutionStatus, FullyQualifiedIdentifier
 from sila2.framework.errors.validation_error import ValidationError
-from sila2.server import ObservableCommandInstance
+from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
 from ..generated.continuousflowinitializationcontroller import (
     ContinuousFlowInitializationControllerBase,
@@ -22,8 +22,8 @@ class ContinuousFlowInitializationControllerImpl(ContinuousFlowInitializationCon
     __pump: ContiFlowPump
     __stop_event: Event
 
-    def __init__(self, pump: ContiFlowPump, executor: Executor):
-        super().__init__()
+    def __init__(self, server: SilaServer, pump: ContiFlowPump, executor: Executor):
+        super().__init__(server)
         self.__pump = pump
         self.__stop_event = Event()
 
@@ -42,7 +42,7 @@ class ContinuousFlowInitializationControllerImpl(ContinuousFlowInitializationCon
         executor.submit(update_is_initialized, self.__stop_event)
 
     def InitializeContiflow(
-        self, *, metadata: Dict[FullyQualifiedIdentifier, Any], instance: ObservableCommandInstance
+        self, *, metadata: MetadataDict, instance: ObservableCommandInstance
     ) -> InitializeContiflow_Responses:
         MAX_WAIT_TIME = datetime.timedelta(seconds=30)
         timer = PollingTimer(MAX_WAIT_TIME.seconds * 1000)

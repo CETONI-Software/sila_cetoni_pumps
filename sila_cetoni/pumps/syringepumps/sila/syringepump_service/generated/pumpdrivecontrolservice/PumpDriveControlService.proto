@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+import "SiLAFramework.proto";
+
+package sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1;
+
+/* Functionality to control and maintain the drive that drives the pump. Allows to initialize a pump (e.g. by executing a reference move) and obtain status information about the pump drive's current state (i.e. enabled/disabled). The initialization has to be successful in order for the pump to work correctly and dose fluids. If the initialization fails, the DefinedExecutionError InitializationFailed is thrown. */
+service PumpDriveControlService {
+  /* Initialize the pump drive (e.g. by executing a reference move). */
+  rpc InitializePumpDrive (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.InitializePumpDrive_Parameters) returns (sila2.org.silastandard.CommandConfirmation) {}
+  /* Monitor the state of InitializePumpDrive */
+  rpc InitializePumpDrive_Info (sila2.org.silastandard.CommandExecutionUUID) returns (stream sila2.org.silastandard.ExecutionInfo) {}
+  /* Retrieve result of InitializePumpDrive */
+  rpc InitializePumpDrive_Result(sila2.org.silastandard.CommandExecutionUUID) returns (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.InitializePumpDrive_Responses) {}
+  /* Set the pump into enabled state. */
+  rpc EnablePumpDrive (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.EnablePumpDrive_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.EnablePumpDrive_Responses) {}
+  /* Set the pump into disabled state. */
+  rpc DisablePumpDrive (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.DisablePumpDrive_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.DisablePumpDrive_Responses) {}
+  /* Restore the internal hardware position counter value of the pump drive. This function is not required and not supported for devices that have an absolute encoder such as the new Nemesys 4 devices Nemesys S and Nemesys M. */
+  rpc RestoreDrivePositionCounter (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.RestoreDrivePositionCounter_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.RestoreDrivePositionCounter_Responses) {}
+  /* The current state of the pump. This is either 'Enabled', 'Disabled', or 'Initializing'. Only if the sate is 'Enabled', the pump can dose fluids. */
+  rpc Subscribe_PumpDriveState (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.Subscribe_PumpDriveState_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.Subscribe_PumpDriveState_Responses) {}
+  /* Returns if the pump is in fault state. If the value is true (i.e. the pump is in fault state), it can be cleared by calling EnablePumpDrive. */
+  rpc Subscribe_FaultState (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.Subscribe_FaultState_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.Subscribe_FaultState_Responses) {}
+  /* Returns the value of the internal drive position counter. You can query this value and store it persistently somewhere before shutting down the device and restore it later using the RestoreDrivePositionCounter Command. */
+  rpc Subscribe_DrivePositionCounter (sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.Subscribe_DrivePositionCounter_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.pumpdrivecontrolservice.v1.Subscribe_DrivePositionCounter_Responses) {}
+}
+
+/* Parameters for InitializePumpDrive */
+message InitializePumpDrive_Parameters {
+}
+
+/* Responses of InitializePumpDrive */
+message InitializePumpDrive_Responses {
+}
+
+/* Parameters for EnablePumpDrive */
+message EnablePumpDrive_Parameters {
+}
+
+/* Responses of EnablePumpDrive */
+message EnablePumpDrive_Responses {
+}
+
+/* Parameters for DisablePumpDrive */
+message DisablePumpDrive_Parameters {
+}
+
+/* Responses of DisablePumpDrive */
+message DisablePumpDrive_Responses {
+}
+
+/* Parameters for RestoreDrivePositionCounter */
+message RestoreDrivePositionCounter_Parameters {
+  sila2.org.silastandard.Integer DrivePositionCounterValue = 1;  /* The position counter value to restore */
+}
+
+/* Responses of RestoreDrivePositionCounter */
+message RestoreDrivePositionCounter_Responses {
+}
+
+/* Parameters for PumpDriveState */
+message Subscribe_PumpDriveState_Parameters {
+}
+
+/* Responses of PumpDriveState */
+message Subscribe_PumpDriveState_Responses {
+  sila2.org.silastandard.String PumpDriveState = 1;  /* The current state of the pump. This is either 'Enabled', 'Disabled', or 'Initializing'. Only if the sate is 'Enabled', the pump can dose fluids. */
+}
+
+/* Parameters for FaultState */
+message Subscribe_FaultState_Parameters {
+}
+
+/* Responses of FaultState */
+message Subscribe_FaultState_Responses {
+  sila2.org.silastandard.Boolean FaultState = 1;  /* Returns if the pump is in fault state. If the value is true (i.e. the pump is in fault state), it can be cleared by calling EnablePumpDrive. */
+}
+
+/* Parameters for DrivePositionCounter */
+message Subscribe_DrivePositionCounter_Parameters {
+}
+
+/* Responses of DrivePositionCounter */
+message Subscribe_DrivePositionCounter_Responses {
+  sila2.org.silastandard.Integer DrivePositionCounter = 1;  /* Returns the value of the internal drive position counter. You can query this value and store it persistently somewhere before shutting down the device and restore it later using the RestoreDrivePositionCounter Command. */
+}

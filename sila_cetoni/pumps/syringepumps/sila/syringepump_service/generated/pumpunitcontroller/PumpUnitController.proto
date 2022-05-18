@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+import "SiLAFramework.proto";
+
+package sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1;
+
+/* Allows to control the currently used units for passing and retrieving flow rates and volumes to and from a pump. */
+service PumpUnitController {
+  /* Sets the flow unit for the pump. The flow unit defines the unit to be used for all flow values passed to or retrieved from the pump. */
+  rpc SetFlowUnit (sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.SetFlowUnit_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.SetFlowUnit_Responses) {}
+  /* Sets the default volume unit. The volume unit defines the unit to be used for all volume values passed to or retrieved from the pump. */
+  rpc SetVolumeUnit (sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.SetVolumeUnit_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.SetVolumeUnit_Responses) {}
+  /* The currently used flow unit. */
+  rpc Subscribe_FlowUnit (sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.Subscribe_FlowUnit_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.Subscribe_FlowUnit_Responses) {}
+  /* The currently used volume unit. */
+  rpc Subscribe_VolumeUnit (sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.Subscribe_VolumeUnit_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.Subscribe_VolumeUnit_Responses) {}
+}
+
+/* The unit for the volume of a fluid (e.g. 'l' for 'litres'). */
+message DataType_VolumeUnit {
+  sila2.org.silastandard.String VolumeUnit = 1;  /* The unit for the volume of a fluid (e.g. 'l' for 'litres'). */
+}
+
+/* The time unit for flow rates (e.g. 'h' for 'hours' or 's' for 'seconds'). */
+message DataType_TimeUnit {
+  sila2.org.silastandard.String TimeUnit = 1;  /* The time unit for flow rates (e.g. 'h' for 'hours' or 's' for 'seconds'). */
+}
+
+/* Parameters for SetFlowUnit */
+message SetFlowUnit_Parameters {
+  message FlowUnit_Struct {
+    sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.DataType_VolumeUnit VolumeUnit = 1;  /* The volume unit of the flow rate */
+    sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.DataType_TimeUnit TimeUnit = 2;  /* The time unit of the flow rate */
+  }
+  sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.SetFlowUnit_Parameters.FlowUnit_Struct FlowUnit = 1;  /* The flow unit to be set. */
+}
+
+/* Responses of SetFlowUnit */
+message SetFlowUnit_Responses {
+}
+
+/* Parameters for SetVolumeUnit */
+message SetVolumeUnit_Parameters {
+  sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.DataType_VolumeUnit VolumeUnit = 1;  /* The volume unit for the flow rate. */
+}
+
+/* Responses of SetVolumeUnit */
+message SetVolumeUnit_Responses {
+}
+
+/* Parameters for FlowUnit */
+message Subscribe_FlowUnit_Parameters {
+}
+
+/* Responses of FlowUnit */
+message Subscribe_FlowUnit_Responses {
+  message FlowUnit_Struct {
+    sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.DataType_VolumeUnit VolumeUnit = 1;  /* The volume unit of the flow rate */
+    sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.DataType_TimeUnit TimeUnit = 2;  /* The time unit of the flow rate */
+  }
+  sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.Subscribe_FlowUnit_Responses.FlowUnit_Struct FlowUnit = 1;  /* The currently used flow unit. */
+}
+
+/* Parameters for VolumeUnit */
+message Subscribe_VolumeUnit_Parameters {
+}
+
+/* Responses of VolumeUnit */
+message Subscribe_VolumeUnit_Responses {
+  sila2.de.cetoni.pumps.syringepumps.pumpunitcontroller.v1.DataType_VolumeUnit VolumeUnit = 1;  /* The currently used volume unit. */
+}

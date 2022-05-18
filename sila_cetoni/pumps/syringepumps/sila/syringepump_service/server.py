@@ -46,29 +46,31 @@ class Server(IOServer):
         )
 
         # common features
-        self.pumpdrivecontrolservice = PumpDriveControlServiceImpl(pump, self.child_task_executor)
-        self.pumpunitcontroller = PumpUnitControllerImpl(pump, self.child_task_executor)
+        self.pumpdrivecontrolservice = PumpDriveControlServiceImpl(self, pump, self.child_task_executor)
+        self.pumpunitcontroller = PumpUnitControllerImpl(self, pump, self.child_task_executor)
         self.set_feature_implementation(PumpDriveControlServiceFeature, self.pumpdrivecontrolservice)
         self.set_feature_implementation(PumpUnitControllerFeature, self.pumpunitcontroller)
 
         if not isinstance(pump, ContiFlowPump):
             # features for real syringe pumps only
-            self.syringeconfigurationcontroller = SyringeConfigurationControllerImpl(pump, self.child_task_executor)
+            self.syringeconfigurationcontroller = SyringeConfigurationControllerImpl(
+                self, pump, self.child_task_executor
+            )
             self.set_feature_implementation(SyringeConfigurationControllerFeature, self.syringeconfigurationcontroller)
 
             try:
                 if pump.has_force_monitoring():
-                    self.forcemonitoringservice = ForceMonitoringServiceImpl(pump, self.child_task_executor)
+                    self.forcemonitoringservice = ForceMonitoringServiceImpl(self, pump, self.child_task_executor)
                     self.set_feature_implementation(ForceMonitoringServiceFeature, self.forcemonitoringservice)
             except AttributeError:
                 pass
 
-            self.pumpfluiddosingservice = PumpFluidDosingServiceImpl(pump, self.child_task_executor)
+            self.pumpfluiddosingservice = PumpFluidDosingServiceImpl(self, pump, self.child_task_executor)
             self.set_feature_implementation(PumpFluidDosingServiceFeature, self.pumpfluiddosingservice)
 
             if valve:
                 self.valvepositioncontroller = ValvePositionControllerImpl(
-                    valve=valve, executor=self.child_task_executor
+                    self, valve=valve, executor=self.child_task_executor
                 )
                 self.set_feature_implementation(ValvePositionControllerFeature, self.valvepositioncontroller)
 

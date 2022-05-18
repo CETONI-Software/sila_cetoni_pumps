@@ -9,6 +9,7 @@ from typing import Any, Dict
 from qmixsdk.qmixpump import ContiFlowProperty, ContiFlowPump, ContiFlowSwitchingMode
 from sila2.framework import FullyQualifiedIdentifier
 from sila2.framework.errors.validation_error import ValidationError
+from sila2.server import MetadataDict, SilaServer
 
 from ..generated.continuousflowconfigurationservice import (
     ContinuousFlowConfigurationServiceBase,
@@ -32,8 +33,8 @@ class ContinuousFlowConfigurationServiceImpl(ContinuousFlowConfigurationServiceB
     }
     __stop_event: Event
 
-    def __init__(self, pump: ContiFlowPump, executor: Executor):
-        super().__init__()
+    def __init__(self, server: SilaServer, pump: ContiFlowPump, executor: Executor):
+        super().__init__(server)
         self.__pump = pump
         self.__stop_event = Event()
 
@@ -106,9 +107,7 @@ class ContinuousFlowConfigurationServiceImpl(ContinuousFlowConfigurationServiceB
         executor.submit(update_refill_flow_rate, self.__stop_event)
         executor.submit(update_switching_mode, self.__stop_event)
 
-    def SetSwitchingMode(
-        self, SwitchingMode: str, *, metadata: Dict[FullyQualifiedIdentifier, Any]
-    ) -> SetSwitchingMode_Responses:
+    def SetSwitchingMode(self, SwitchingMode: str, *, metadata: MetadataDict) -> SetSwitchingMode_Responses:
         try:
             self.__pump.set_device_property(
                 ContiFlowProperty.SWITCHING_MODE, self.__ALLOWED_SWITCHING_MODES.get(SwitchingMode)
@@ -121,19 +120,15 @@ class ContinuousFlowConfigurationServiceImpl(ContinuousFlowConfigurationServiceB
                 ),
             )
 
-    def SetRefillFlowRate(
-        self, RefillFlowRate: float, *, metadata: Dict[FullyQualifiedIdentifier, Any]
-    ) -> SetRefillFlowRate_Responses:
+    def SetRefillFlowRate(self, RefillFlowRate: float, *, metadata: MetadataDict) -> SetRefillFlowRate_Responses:
         self.__pump.set_device_property(ContiFlowProperty.REFILL_FLOW, RefillFlowRate)
 
     def SetCrossFlowDuration(
-        self, CrossFlowDuration: float, *, metadata: Dict[FullyQualifiedIdentifier, Any]
+        self, CrossFlowDuration: float, *, metadata: MetadataDict
     ) -> SetCrossFlowDuration_Responses:
         self.__pump.set_device_property(ContiFlowProperty.CROSSFLOW_DURATION_S, CrossFlowDuration)
 
-    def SetOverlapDuration(
-        self, OverlapDuration: float, *, metadata: Dict[FullyQualifiedIdentifier, Any]
-    ) -> SetOverlapDuration_Responses:
+    def SetOverlapDuration(self, OverlapDuration: float, *, metadata: MetadataDict) -> SetOverlapDuration_Responses:
         self.__pump.set_device_property(ContiFlowProperty.OVERLAP_DURATION_S, OverlapDuration)
 
     def stop(self) -> None:

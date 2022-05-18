@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+import "SiLAFramework.proto";
+
+package sila2.de.cetoni.pumps.contiflowpumps.continuousflowinitializationcontroller.v1;
+
+/* Allows to initialize a contiflow pump before starting the continuous flow. */
+service ContinuousFlowInitializationController {
+  /* Initialize the continuous flow pump.
+Call this command after all parameters have been set, to prepare the conti flow pump for the start of the continuous flow. The initialization procedure ensures, that the syringes are sufficiently filled to start the continuous flow. So calling this command may cause a syringe refill if the syringes are not sufficiently filled. So before calling this command you should ensure, that syringe refilling properly works an can be executed. If you have a certain syringe refill procedure, you can also manually refill the syringes with the normal syringe pump functions. If the syringes are sufficiently filled if you call this function, no refilling will take place.
+         */
+  rpc InitializeContiflow (sila2.de.cetoni.pumps.contiflowpumps.continuousflowinitializationcontroller.v1.InitializeContiflow_Parameters) returns (sila2.org.silastandard.CommandConfirmation) {}
+  /* Monitor the state of InitializeContiflow */
+  rpc InitializeContiflow_Info (sila2.org.silastandard.CommandExecutionUUID) returns (stream sila2.org.silastandard.ExecutionInfo) {}
+  /* Retrieve result of InitializeContiflow */
+  rpc InitializeContiflow_Result(sila2.org.silastandard.CommandExecutionUUID) returns (sila2.de.cetoni.pumps.contiflowpumps.continuousflowinitializationcontroller.v1.InitializeContiflow_Responses) {}
+  /* Returns true, if the continuous fow pump is initialized and ready for continuous flow start.
+Use this function to check if the pump is initialized before you start a continuous flow. If you change and continuous flow parameter, like valve settings, cross flow duration and so on, the pump will leave the initialized state. That means, after each parameter change, an initialization is required. Changing the flow rate or the dosing volume does not require and initialization.
+         */
+  rpc Subscribe_IsInitialized (sila2.de.cetoni.pumps.contiflowpumps.continuousflowinitializationcontroller.v1.Subscribe_IsInitialized_Parameters) returns (stream sila2.de.cetoni.pumps.contiflowpumps.continuousflowinitializationcontroller.v1.Subscribe_IsInitialized_Responses) {}
+}
+
+/* Parameters for InitializeContiflow */
+message InitializeContiflow_Parameters {
+}
+
+/* Responses of InitializeContiflow */
+message InitializeContiflow_Responses {
+}
+
+/* Parameters for IsInitialized */
+message Subscribe_IsInitialized_Parameters {
+}
+
+/* Responses of IsInitialized */
+message Subscribe_IsInitialized_Responses {
+  sila2.org.silastandard.Boolean IsInitialized = 1;  /* Returns true, if the continuous fow pump is initialized and ready for continuous flow start. Use this function to check if the pump is initialized before you start a continuous flow. If you change and continuous flow parameter, like valve settings, cross flow duration and so on, the pump will leave the initialized state. That means, after each parameter change, an initialization is required. Changing the flow rate or the dosing volume does not require and initialization. */
+}

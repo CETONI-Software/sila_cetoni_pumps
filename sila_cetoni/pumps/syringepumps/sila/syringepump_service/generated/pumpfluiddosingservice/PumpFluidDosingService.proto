@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+import "SiLAFramework.proto";
+
+package sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1;
+
+/* Allows to dose a specified fluid. There are commands for absolute dosing (SetFillLevel) and relative dosing (DoseVolume and GenerateFlow) available. The flow rate can be negative. In this case the pump aspirates the fluid instead of dispensing. The flow rate has to be a value between MaxFlowRate and MinFlowRate. If the value is not within this range (hence is invalid) a ValidationError will be thrown. At any time the property CurrentSyringeFillLevel can be queried to see how much fluid is left in the syringe. Similarly the property CurrentFlowRate can be queried to get the current flow rate at which the pump is dosing. */
+service PumpFluidDosingService {
+  /* 
+                Pumps fluid with the given flow rate until the requested fill level is reached.
+                Depending on the requested fill level given in the FillLevel parameter this function may cause aspiration or dispension of fluid.
+         */
+  rpc SetFillLevel (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.SetFillLevel_Parameters) returns (sila2.org.silastandard.CommandConfirmation) {}
+  /* Monitor the state of SetFillLevel */
+  rpc SetFillLevel_Info (sila2.org.silastandard.CommandExecutionUUID) returns (stream sila2.org.silastandard.ExecutionInfo) {}
+  /* Retrieve result of SetFillLevel */
+  rpc SetFillLevel_Result(sila2.org.silastandard.CommandExecutionUUID) returns (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.SetFillLevel_Responses) {}
+  /* Dose a certain amount of volume with the given flow rate. */
+  rpc DoseVolume (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.DoseVolume_Parameters) returns (sila2.org.silastandard.CommandConfirmation) {}
+  /* Monitor the state of DoseVolume */
+  rpc DoseVolume_Info (sila2.org.silastandard.CommandExecutionUUID) returns (stream sila2.org.silastandard.ExecutionInfo) {}
+  /* Retrieve result of DoseVolume */
+  rpc DoseVolume_Result(sila2.org.silastandard.CommandExecutionUUID) returns (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.DoseVolume_Responses) {}
+  /* 
+            Generate a continuous flow with the given flow rate. Dosing continues until it gets stopped manually by calling StopDosage or until the pusher reached one of its limits.
+         */
+  rpc GenerateFlow (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.GenerateFlow_Parameters) returns (sila2.org.silastandard.CommandConfirmation) {}
+  /* Monitor the state of GenerateFlow */
+  rpc GenerateFlow_Info (sila2.org.silastandard.CommandExecutionUUID) returns (stream sila2.org.silastandard.ExecutionInfo) {}
+  /* Retrieve result of GenerateFlow */
+  rpc GenerateFlow_Result(sila2.org.silastandard.CommandExecutionUUID) returns (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.GenerateFlow_Responses) {}
+  /* Stops a currently running dosage immediately. */
+  rpc StopDosage (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.StopDosage_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.StopDosage_Responses) {}
+  /* The maximum amount of fluid that the syringe can hold. */
+  rpc Subscribe_MaxSyringeFillLevel (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.Subscribe_MaxSyringeFillLevel_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.Subscribe_MaxSyringeFillLevel_Responses) {}
+  /* The current amount of fluid left in the syringe. */
+  rpc Subscribe_SyringeFillLevel (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.Subscribe_SyringeFillLevel_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.Subscribe_SyringeFillLevel_Responses) {}
+  /* The maximum value of the flow rate at which this pump can dose a fluid. */
+  rpc Subscribe_MaxFlowRate (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.Subscribe_MaxFlowRate_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.Subscribe_MaxFlowRate_Responses) {}
+  /* The current value of the flow rate. It is 0 if the pump does not dose any fluid. */
+  rpc Subscribe_FlowRate (sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.Subscribe_FlowRate_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.pumpfluiddosingservice.v1.Subscribe_FlowRate_Responses) {}
+}
+
+/* Parameters for SetFillLevel */
+message SetFillLevel_Parameters {
+  sila2.org.silastandard.Real FillLevel = 1;  /* The requested fill level. A level of 0 indicates a completely empty syringe. The value has to be between 0 and MaxSyringeFillLevel. Depending on the requested fill level this may cause aspiration or dispension of fluid. */
+  sila2.org.silastandard.Real FlowRate = 2;  /* The flow rate at which the pump should dose the fluid. */
+}
+
+/* Responses of SetFillLevel */
+message SetFillLevel_Responses {
+}
+
+/* Parameters for DoseVolume */
+message DoseVolume_Parameters {
+  sila2.org.silastandard.Real Volume = 1;  /* The amount of volume to dose. This value can be negative. In that case the pump aspirates the fluid. */
+  sila2.org.silastandard.Real FlowRate = 2;  /* The flow rate at which the pump should dose the fluid. */
+}
+
+/* Responses of DoseVolume */
+message DoseVolume_Responses {
+}
+
+/* Parameters for GenerateFlow */
+message GenerateFlow_Parameters {
+  sila2.org.silastandard.Real FlowRate = 1;  /* The flow rate at which the pump should dose the fluid. This value can be negative. In that case the pump aspirates the fluid. */
+}
+
+/* Responses of GenerateFlow */
+message GenerateFlow_Responses {
+}
+
+/* Parameters for StopDosage */
+message StopDosage_Parameters {
+}
+
+/* Responses of StopDosage */
+message StopDosage_Responses {
+}
+
+/* Parameters for MaxSyringeFillLevel */
+message Subscribe_MaxSyringeFillLevel_Parameters {
+}
+
+/* Responses of MaxSyringeFillLevel */
+message Subscribe_MaxSyringeFillLevel_Responses {
+  sila2.org.silastandard.Real MaxSyringeFillLevel = 1;  /* The maximum amount of fluid that the syringe can hold. */
+}
+
+/* Parameters for SyringeFillLevel */
+message Subscribe_SyringeFillLevel_Parameters {
+}
+
+/* Responses of SyringeFillLevel */
+message Subscribe_SyringeFillLevel_Responses {
+  sila2.org.silastandard.Real SyringeFillLevel = 1;  /* The current amount of fluid left in the syringe. */
+}
+
+/* Parameters for MaxFlowRate */
+message Subscribe_MaxFlowRate_Parameters {
+}
+
+/* Responses of MaxFlowRate */
+message Subscribe_MaxFlowRate_Responses {
+  sila2.org.silastandard.Real MaxFlowRate = 1;  /* The maximum value of the flow rate at which this pump can dose a fluid. */
+}
+
+/* Parameters for FlowRate */
+message Subscribe_FlowRate_Parameters {
+}
+
+/* Responses of FlowRate */
+message Subscribe_FlowRate_Responses {
+  sila2.org.silastandard.Real FlowRate = 1;  /* The current value of the flow rate. It is 0 if the pump does not dose any fluid. */
+}

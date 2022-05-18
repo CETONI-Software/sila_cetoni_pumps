@@ -9,7 +9,7 @@ from typing import Any, Dict
 from qmixsdk.qmixpump import ContiFlowPump
 from sila2.framework import CommandExecutionStatus, FullyQualifiedIdentifier
 from sila2.framework.errors.validation_error import ValidationError
-from sila2.server import ObservableCommandInstance
+from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
 from .....validate import validate
 from ..generated.continuousflowdosingservice import (
@@ -24,8 +24,8 @@ class ContinuousFlowDosingServiceImpl(ContinuousFlowDosingServiceBase):
     __pump: ContiFlowPump
     __stop_event: Event
 
-    def __init__(self, pump: ContiFlowPump, executor: Executor):
-        super().__init__()
+    def __init__(self, server: SilaServer, pump: ContiFlowPump, executor: Executor):
+        super().__init__(server)
         self.__pump = pump
         self.__stop_event = Event()
 
@@ -54,11 +54,11 @@ class ContinuousFlowDosingServiceImpl(ContinuousFlowDosingServiceBase):
         executor.submit(update_flow_rate, self.__stop_event)
         executor.submit(update_max_flow_rate, self.__stop_event)
 
-    def StopDosage(self, *, metadata: Dict[FullyQualifiedIdentifier, Any]) -> StopDosage_Responses:
+    def StopDosage(self, *, metadata: MetadataDict) -> StopDosage_Responses:
         self.__pump.stop_pumping()
 
     def GenerateFlow(
-        self, FlowRate: float, *, metadata: Dict[FullyQualifiedIdentifier, Any], instance: ObservableCommandInstance
+        self, FlowRate: float, *, metadata: MetadataDict, instance: ObservableCommandInstance
     ) -> GenerateFlow_Responses:
         validate(self.__pump, ContinuousFlowDosingServiceFeature["GenerateFlow"], FlowRate)
         # self.__pump.stop_pumping() # only one dosage allowed

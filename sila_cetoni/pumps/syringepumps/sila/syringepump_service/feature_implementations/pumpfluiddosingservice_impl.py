@@ -16,7 +16,7 @@ from sila2.framework import Command, FullyQualifiedIdentifier, Property
 from sila2.framework.command.execution_info import CommandExecutionStatus
 from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 from sila2.framework.errors.validation_error import ValidationError
-from sila2.server import ObservableCommandInstance
+from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
 from sila_cetoni.application.system import ApplicationSystem
 
@@ -65,8 +65,8 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
     __system: ApplicationSystem
     __stop_event: Event
 
-    def __init__(self, pump: Pump, executor: Executor):
-        super().__init__()
+    def __init__(self, server: SilaServer, pump: Pump, executor: Executor):
+        super().__init__(server)
         self.__pump = pump
         self.__system = ApplicationSystem()
         self.__stop_event = Event()
@@ -122,7 +122,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         executor.submit(update_max_fill_level, self.__stop_event)
 
     @requires_operational_system
-    def StopDosage(self, *, metadata: Dict[FullyQualifiedIdentifier, Any]) -> StopDosage_Responses:
+    def StopDosage(self, *, metadata: MetadataDict) -> StopDosage_Responses:
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(PumpFluidDosingServiceFeature["StopDosage"])
         self.__pump.stop_pumping()
@@ -189,7 +189,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         FillLevel: float,
         FlowRate: float,
         *,
-        metadata: Dict[FullyQualifiedIdentifier, Any],
+        metadata: MetadataDict,
         instance: ObservableCommandInstance,
     ) -> SetFillLevel_Responses:
         if not self.__system.state.is_operational():
@@ -214,7 +214,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         Volume: float,
         FlowRate: float,
         *,
-        metadata: Dict[FullyQualifiedIdentifier, Any],
+        metadata: MetadataDict,
         instance: ObservableCommandInstance,
     ) -> DoseVolume_Responses:
         if not self.__system.state.is_operational():
@@ -228,7 +228,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         self._wait_dosage_finished(instance)
 
     def GenerateFlow(
-        self, FlowRate: float, *, metadata: Dict[FullyQualifiedIdentifier, Any], instance: ObservableCommandInstance
+        self, FlowRate: float, *, metadata: MetadataDict, instance: ObservableCommandInstance
     ) -> GenerateFlow_Responses:
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(PumpFluidDosingServiceFeature["GenerateFlow"])

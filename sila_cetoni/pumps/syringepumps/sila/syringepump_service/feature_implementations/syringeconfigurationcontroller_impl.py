@@ -10,6 +10,7 @@ from qmixsdk.qmixpump import Pump
 from sila2.framework import Command, FullyQualifiedIdentifier, Property
 from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 from sila2.framework.errors.validation_error import ValidationError
+from sila2.server import MetadataDict, SilaServer
 
 from sila_cetoni.application.system import ApplicationSystem
 
@@ -35,8 +36,8 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
     __system: ApplicationSystem
     __stop_event: Event
 
-    def __init__(self, pump: Pump, executor: Executor):
-        super().__init__()
+    def __init__(self, server: SilaServer, pump: Pump, executor: Executor):
+        super().__init__(server)
         self.__pump = pump
         self.__system = ApplicationSystem()
         self.__stop_event = Event()
@@ -69,7 +70,7 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
         executor.submit(update_max_piston_stroke, self.__stop_event)
 
     def SetSyringeParameters(
-        self, InnerDiameter: float, MaxPistonStroke: float, *, metadata: Dict[FullyQualifiedIdentifier, Any]
+        self, InnerDiameter: float, MaxPistonStroke: float, *, metadata: MetadataDict
     ) -> SetSyringeParameters_Responses:
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(SyringeConfigurationControllerFeature["SetSyringeParameters"])

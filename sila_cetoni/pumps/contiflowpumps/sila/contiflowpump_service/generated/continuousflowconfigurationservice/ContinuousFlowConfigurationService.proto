@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+import "SiLAFramework.proto";
+
+package sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1;
+
+/* Allows to configure the parameters of a continuous flow pump. */
+service ContinuousFlowConfigurationService {
+  /* Sets the switching mode for syringe pump switchover if one syringe pump runs empty. */
+  rpc SetSwitchingMode (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.SetSwitchingMode_Parameters) returns (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.SetSwitchingMode_Responses) {}
+  /* Set the refill flow rate for the continuous flow pump. The refill flow speed limits the maximum flow that is possible with a contiflow pump. */
+  rpc SetRefillFlowRate (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.SetRefillFlowRate_Parameters) returns (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.SetRefillFlowRate_Responses) {}
+  /* Set the cross flow duration for the continuous flow pump. The cross flow duration is the time the pump running empty decelerates while the filled pump accelerates. */
+  rpc SetCrossFlowDuration (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.SetCrossFlowDuration_Parameters) returns (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.SetCrossFlowDuration_Responses) {}
+  /* Set the overlap duration for the continuous flow pump. The overlap duration is a time the refilled pump will start earlier than the empty pump stops. You can use this time to ensure that the system is already pressurized when switching over. */
+  rpc SetOverlapDuration (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.SetOverlapDuration_Parameters) returns (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.SetOverlapDuration_Responses) {}
+  /* Get the switching mode for syringe pump switchover if one syringe pump runs empty. */
+  rpc Subscribe_SwitchingMode (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_SwitchingMode_Parameters) returns (stream sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_SwitchingMode_Responses) {}
+  /* Get the maximum possible refill flow rate for the continuous flow pump. */
+  rpc Subscribe_MaxRefillFlowRate (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_MaxRefillFlowRate_Parameters) returns (stream sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_MaxRefillFlowRate_Responses) {}
+  /* Get the refill flow rate for the continuous flow pump. */
+  rpc Subscribe_RefillFlowRate (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_RefillFlowRate_Parameters) returns (stream sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_RefillFlowRate_Responses) {}
+  /* Get the minimum flow rate that is theoretically possible with the continuous flow pump. */
+  rpc Subscribe_MinFlowRate (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_MinFlowRate_Parameters) returns (stream sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_MinFlowRate_Responses) {}
+  /* Get the cross flow duration for the continuous flow pump. */
+  rpc Subscribe_CrossFlowDuration (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_CrossFlowDuration_Parameters) returns (stream sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_CrossFlowDuration_Responses) {}
+  /* Get the overlap duration for the continuous flow pump. */
+  rpc Subscribe_OverlapDuration (sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_OverlapDuration_Parameters) returns (stream sila2.de.cetoni.pumps.contiflowpumps.continuousflowconfigurationservice.v1.Subscribe_OverlapDuration_Responses) {}
+}
+
+/* Parameters for SetSwitchingMode */
+message SetSwitchingMode_Parameters {
+  sila2.org.silastandard.String SwitchingMode = 1;  /* The new switching mode to set */
+}
+
+/* Responses of SetSwitchingMode */
+message SetSwitchingMode_Responses {
+}
+
+/* Parameters for SetRefillFlowRate */
+message SetRefillFlowRate_Parameters {
+  sila2.org.silastandard.Real RefillFlowRate = 1;  /* The refill flow rate to set */
+}
+
+/* Responses of SetRefillFlowRate */
+message SetRefillFlowRate_Responses {
+}
+
+/* Parameters for SetCrossFlowDuration */
+message SetCrossFlowDuration_Parameters {
+  sila2.org.silastandard.Real CrossFlowDuration = 1;  /* The cross flow duration to set */
+}
+
+/* Responses of SetCrossFlowDuration */
+message SetCrossFlowDuration_Responses {
+}
+
+/* Parameters for SetOverlapDuration */
+message SetOverlapDuration_Parameters {
+  sila2.org.silastandard.Real OverlapDuration = 1;  /* The overlap duration to set */
+}
+
+/* Responses of SetOverlapDuration */
+message SetOverlapDuration_Responses {
+}
+
+/* Parameters for SwitchingMode */
+message Subscribe_SwitchingMode_Parameters {
+}
+
+/* Responses of SwitchingMode */
+message Subscribe_SwitchingMode_Responses {
+  sila2.org.silastandard.String SwitchingMode = 1;  /* Get the switching mode for syringe pump switchover if one syringe pump runs empty. */
+}
+
+/* Parameters for MaxRefillFlowRate */
+message Subscribe_MaxRefillFlowRate_Parameters {
+}
+
+/* Responses of MaxRefillFlowRate */
+message Subscribe_MaxRefillFlowRate_Responses {
+  sila2.org.silastandard.Real MaxRefillFlowRate = 1;  /* Get the maximum possible refill flow rate for the continuous flow pump. */
+}
+
+/* Parameters for RefillFlowRate */
+message Subscribe_RefillFlowRate_Parameters {
+}
+
+/* Responses of RefillFlowRate */
+message Subscribe_RefillFlowRate_Responses {
+  sila2.org.silastandard.Real RefillFlowRate = 1;  /* Get the refill flow rate for the continuous flow pump. */
+}
+
+/* Parameters for MinFlowRate */
+message Subscribe_MinFlowRate_Parameters {
+}
+
+/* Responses of MinFlowRate */
+message Subscribe_MinFlowRate_Responses {
+  sila2.org.silastandard.Real MinFlowRate = 1;  /* Get the minimum flow rate that is theoretically possible with the continuous flow pump. */
+}
+
+/* Parameters for CrossFlowDuration */
+message Subscribe_CrossFlowDuration_Parameters {
+}
+
+/* Responses of CrossFlowDuration */
+message Subscribe_CrossFlowDuration_Responses {
+  sila2.org.silastandard.Real CrossFlowDuration = 1;  /* Get the cross flow duration for the continuous flow pump. */
+}
+
+/* Parameters for OverlapDuration */
+message Subscribe_OverlapDuration_Parameters {
+}
+
+/* Responses of OverlapDuration */
+message Subscribe_OverlapDuration_Responses {
+  sila2.org.silastandard.Real OverlapDuration = 1;  /* Get the overlap duration for the continuous flow pump. */
+}

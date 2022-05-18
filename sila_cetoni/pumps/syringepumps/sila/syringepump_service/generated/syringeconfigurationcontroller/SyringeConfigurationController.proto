@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+import "SiLAFramework.proto";
+
+package sila2.de.cetoni.pumps.syringepumps.syringeconfigurationcontroller.v1;
+
+/* Provides syringe pump specific functions for configuration (i.e. the configuration of the syringe itself). */
+service SyringeConfigurationController {
+  /* Set syringe parameters. If you change the syringe in one device, you need to setup the new syringe parameters to get proper conversion of flow rate und volume units. */
+  rpc SetSyringeParameters (sila2.de.cetoni.pumps.syringepumps.syringeconfigurationcontroller.v1.SetSyringeParameters_Parameters) returns (sila2.de.cetoni.pumps.syringepumps.syringeconfigurationcontroller.v1.SetSyringeParameters_Responses) {}
+  /* Inner diameter of the syringe tube in millimetres. */
+  rpc Subscribe_InnerDiameter (sila2.de.cetoni.pumps.syringepumps.syringeconfigurationcontroller.v1.Subscribe_InnerDiameter_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.syringeconfigurationcontroller.v1.Subscribe_InnerDiameter_Responses) {}
+  /* The maximum piston stroke defines the maximum position the piston can be moved to before it slips out of the syringe tube. The maximum piston stroke limits the maximum travel range of the syringe pump pusher. */
+  rpc Subscribe_MaxPistonStroke (sila2.de.cetoni.pumps.syringepumps.syringeconfigurationcontroller.v1.Subscribe_MaxPistonStroke_Parameters) returns (stream sila2.de.cetoni.pumps.syringepumps.syringeconfigurationcontroller.v1.Subscribe_MaxPistonStroke_Responses) {}
+}
+
+/* Parameters for SetSyringeParameters */
+message SetSyringeParameters_Parameters {
+  sila2.org.silastandard.Real InnerDiameter = 1;  /* Inner diameter of the syringe tube in millimetres. */
+  sila2.org.silastandard.Real MaxPistonStroke = 2;  /* The maximum piston stroke defines the maximum position the piston can be moved to before it slips out of the syringe tube. The maximum piston stroke limits the maximum travel range of the syringe pump pusher. */
+}
+
+/* Responses of SetSyringeParameters */
+message SetSyringeParameters_Responses {
+}
+
+/* Parameters for InnerDiameter */
+message Subscribe_InnerDiameter_Parameters {
+}
+
+/* Responses of InnerDiameter */
+message Subscribe_InnerDiameter_Responses {
+  sila2.org.silastandard.Real InnerDiameter = 1;  /* Inner diameter of the syringe tube in millimetres. */
+}
+
+/* Parameters for MaxPistonStroke */
+message Subscribe_MaxPistonStroke_Parameters {
+}
+
+/* Responses of MaxPistonStroke */
+message Subscribe_MaxPistonStroke_Responses {
+  sila2.org.silastandard.Real MaxPistonStroke = 1;  /* The maximum piston stroke defines the maximum position the piston can be moved to before it slips out of the syringe tube. The maximum piston stroke limits the maximum travel range of the syringe pump pusher. */
+}
