@@ -166,8 +166,19 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         instance.estimated_remaining_time = self.__CALIBRATION_TIMEOUT
 
         self.__is_initializing = True
-        self.__pump.calibrate()
-        time.sleep(0.2)
+        try:
+            self.__pump.calibrate()
+            time.sleep(0.2)
+        except DeviceError as err:
+            self.__is_initializing = False
+            instance.progress = 1
+            instance.estimated_remaining_time = datetime.timedelta(0)
+            if err.args[1] == -212:
+                # Device does not support this operation -> pump has an absolute encoder and does not need calibration
+                instance.status = CommandExecutionStatus.finishedSuccessfully
+            else:
+                instance.status = CommandExecutionStatus.finishedWithError
+                raise InitializationFailed(err.args[2] if len(err.args) > 2 else err.args[0])
 
         calibration_finished = self.__pump.is_calibration_finished() or not self.__pump.is_enabled()
         if calibration_finished:
