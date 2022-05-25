@@ -203,8 +203,8 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             fill_level=FillLevel,
             fill_level_id=0,
         )
-        # self.__pump.stop_pumping() # only one dosage allowed
-        # time.sleep(0.25) # wait for the currently running dosage to catch up
+        self.__pump.stop_pumping()  # only one dosage allowed
+        time.sleep(0.25)  # wait for the currently running dosage to catch up
 
         self.__pump.set_fill_level(FillLevel, FlowRate)
         self._wait_dosage_finished(instance)
@@ -221,8 +221,8 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             raise SystemNotOperationalError(PumpFluidDosingServiceFeature["DoseVolume"])
 
         validate(self.__pump, PumpFluidDosingServiceFeature["DoseVolume"], FlowRate, 1, volume=Volume, volume_id=0)
-        # self.__pump.stop_pumping() # only one dosage allowed
-        # time.sleep(0.25) # wait for the currently running dosage to catch up
+        self.__pump.stop_pumping()  # only one dosage allowed
+        time.sleep(0.25)  # wait for the currently running dosage to catch up
 
         self.__pump.pump_volume(Volume, FlowRate)
         self._wait_dosage_finished(instance)
@@ -237,8 +237,8 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         # Since `validate` tests against 0 and the max flow rate of
         # the pump, we pass the absolute value of the `FlowRate`.
         validate(self.__pump, PumpFluidDosingServiceFeature["GenerateFlow"], abs(FlowRate), 0)
-        # self.__pump.stop_pumping() # only one dosage allowed
-        # time.sleep(0.25) # wait for the currently running dosage to catch up
+        self.__pump.stop_pumping()  # only one dosage allowed
+        time.sleep(0.25)  # wait for the currently running dosage to catch up
 
         self.__pump.generate_flow(FlowRate)
         self._wait_dosage_finished(instance)
