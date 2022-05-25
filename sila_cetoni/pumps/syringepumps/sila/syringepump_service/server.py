@@ -4,6 +4,7 @@ from uuid import UUID
 from qmixsdk.qmixpump import ContiFlowPump, Pump
 from qmixsdk.qmixvalve import Valve
 
+from sila_cetoni.core.device_drivers.abc import BatteryInterface
 from sila_cetoni.io.sila.io_service.server import Server as IOServer
 from sila_cetoni.valves.sila.valve_service.feature_implementations.valvepositioncontroller_impl import (
     ValvePositionControllerImpl,
@@ -28,6 +29,7 @@ class Server(IOServer):
         pump: Union[Pump, ContiFlowPump],
         valve: Optional[Valve] = None,
         io_channels: List = [],
+        battery: Optional[BatteryInterface] = None,
         server_name: str = "",
         server_type: str = "",
         server_description: str = "",
@@ -37,6 +39,7 @@ class Server(IOServer):
     ):
         super().__init__(
             io_channels,
+            battery,
             server_name=server_name or "Syringe Pump Service",
             server_type=server_type or "TestServer",
             server_description=server_description or "The SiLA 2 driver for CETONI syringe pumps",
