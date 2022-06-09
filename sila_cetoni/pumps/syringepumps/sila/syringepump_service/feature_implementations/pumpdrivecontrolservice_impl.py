@@ -171,7 +171,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
             time.sleep(0.2)
         except DeviceError as err:
             self.__is_initializing = False
-            instance.progress = 1
+            instance.progress = 100
             instance.estimated_remaining_time = datetime.timedelta(0)
             if err.args[1] == -212:
                 # Device does not support this operation -> pump has an absolute encoder and does not need calibration
@@ -183,7 +183,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         calibration_finished = self.__pump.is_calibration_finished() or not self.__pump.is_enabled()
         if calibration_finished:
             instance.status = CommandExecutionStatus.finishedSuccessfully
-            instance.progress = 1
+            instance.progress = 100
             instance.estimated_remaining_time = datetime.timedelta(0)
 
         timeout: datetime.timedelta = self.__CALIBRATION_TIMEOUT
@@ -195,7 +195,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
             timeout -= POLLING_TIMEOUT
             if message_timer.is_expired():
                 instance.status = CommandExecutionStatus.running
-                instance.progress = (self.__CALIBRATION_TIMEOUT - timeout) / self.__CALIBRATION_TIMEOUT
+                instance.progress = 100 * (self.__CALIBRATION_TIMEOUT - timeout) / self.__CALIBRATION_TIMEOUT
                 instance.estimated_remaining_time = timeout
                 message_timer.restart()
             calibration_finished = self.__pump.is_calibration_finished()
@@ -205,7 +205,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         else:
             instance.status = CommandExecutionStatus.finishedWithError
             logger.error("An unexpected error occurred: %s", self.__pump.read_last_error())
-        instance.progress = 1
+        instance.progress = 100
         instance.estimated_remaining_time = datetime.timedelta(0)
 
         self.__is_initializing = False

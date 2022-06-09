@@ -136,7 +136,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
 
         if not self.__pump.is_pumping():
             instance.status = CommandExecutionStatus.finishedSuccessfully
-            instance.progress = 1
+            instance.progress = 100
 
         target_volume = self.__pump.get_target_volume()
         logger.debug("target volume: %f, current volume: %f", target_volume, self.__pump.get_fill_level())
@@ -147,7 +147,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             flow_in_sec = self.__pump.get_flow_is() / self.__pump.get_flow_unit().time_unitid.value
         if flow_in_sec == 0:
             instance.status = CommandExecutionStatus.finishedWithError
-            instance.progress = 1
+            instance.progress = 100
             logger.error("The pump didn't start pumping. Last error: %s", self.__pump.read_last_error())
             return
 
@@ -169,18 +169,18 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             if message_timer.is_expired():
                 logger.info("Fill level: %s", self.__pump.get_fill_level())
                 instance.status = CommandExecutionStatus.running
-                instance.progress = self.__pump.get_dosed_volume() / target_volume
+                instance.progress = 100 * self.__pump.get_dosed_volume() / target_volume
                 instance.estimated_remaining_time = dosing_time
                 message_timer.restart()
             is_pumping = self.__pump.is_pumping()
 
         if not is_pumping and not self.__pump.is_in_fault_state() and self.__pump.is_enabled():
             instance.status = CommandExecutionStatus.finishedSuccessfully
-            instance.progress = 1
+            instance.progress = 100
             instance.estimated_remaining_time = datetime.timedelta(0)
         else:
             instance.status = CommandExecutionStatus.finishedWithError
-            instance.progress = 1
+            instance.progress = 100
             instance.estimated_remaining_time = datetime.timedelta(0)
             logger.error("An unexpected error occurred: %s", self.__pump.read_last_error())
 
