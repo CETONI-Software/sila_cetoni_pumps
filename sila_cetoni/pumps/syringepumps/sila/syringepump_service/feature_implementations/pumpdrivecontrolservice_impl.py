@@ -57,7 +57,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         self.__pump = pump
         self.__is_initializing = False
         self.__system = ApplicationSystem()
-        self.__config = Config(self.__pump.get_pump_name())
+        self.__config = Config(self.__pump.get_pump_name(), self.__system.device_config.name)
         self.__stop_event = Event()
 
         if not self.__pump.is_position_sensing_initialized():
