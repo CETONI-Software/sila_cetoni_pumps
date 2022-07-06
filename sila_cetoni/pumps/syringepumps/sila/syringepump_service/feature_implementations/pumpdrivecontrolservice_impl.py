@@ -132,11 +132,13 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
             raise SystemNotOperationalError(PumpDriveControlServiceFeature["EnablePumpDrive"])
         self.__pump.clear_fault()
         self.__pump.enable(True)
+        self.update_PumpDriveState("Enabled" if self.__pump.is_enabled() else "Disabled")
 
     def DisablePumpDrive(self, *, metadata: MetadataDict) -> DisablePumpDrive_Responses:
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(PumpDriveControlServiceFeature["DisablePumpDrive"])
         self.__pump.enable(False)
+        self.update_PumpDriveState("Enabled" if self.__pump.is_enabled() else "Disabled")
 
     def RestoreDrivePositionCounter(
         self, DrivePositionCounterValue: int, *, metadata: MetadataDict
