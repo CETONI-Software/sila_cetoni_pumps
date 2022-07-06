@@ -23,7 +23,7 @@ from .generated.pumpunitcontroller import PumpUnitControllerFeature
 from .generated.syringeconfigurationcontroller import SyringeConfigurationControllerFeature
 
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 
 class Server(IOServer):
