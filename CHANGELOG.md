@@ -18,6 +18,12 @@ Types of changes
 
 ## Unreleased
 
+### Changed
+- Bump sila2 to v0.8.2
+
+### Fixed
+- When calling the `EnablePumpDrive`/`DisablePumpDrive` Commands the `PumpDriveState` Property is updated to immediately
+  reflect the new state
 
 ## v1.0.0
 
