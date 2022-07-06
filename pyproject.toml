@@ -19,7 +19,7 @@ classifiers = [
 requires-python = ">=3.7"
 dependencies = [
     "coloredlogs",
-    "sila2[codegen]==0.8.0",
+    "sila2[codegen]==0.8.2",
 ]
 
 [project.optional-dependencies]
