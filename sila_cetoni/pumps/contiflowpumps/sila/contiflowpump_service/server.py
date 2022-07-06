@@ -15,6 +15,9 @@ from .generated.continuousflowdosingservice import ContinuousFlowDosingServiceFe
 from .generated.continuousflowinitializationcontroller import ContinuousFlowInitializationControllerFeature
 
 
+__version__ = "1.0.0"
+
+
 class Server(SyringePumpServer):
     def __init__(
         self,
@@ -31,7 +34,7 @@ class Server(SyringePumpServer):
             server_name=server_name or "Continuous Flow Service",
             server_type=server_type or "TestServer",
             server_description=server_description or "The SiLA 2 driver for CETONI continuous flow syringe pumps",
-            server_version=server_version or "0.1.0",
+            server_version=server_version or __version__,
             server_vendor_url=server_vendor_url or "https://www.cetoni.com",
             server_uuid=server_uuid,
         )

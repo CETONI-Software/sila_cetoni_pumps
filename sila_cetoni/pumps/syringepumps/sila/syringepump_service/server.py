@@ -23,6 +23,9 @@ from .generated.pumpunitcontroller import PumpUnitControllerFeature
 from .generated.syringeconfigurationcontroller import SyringeConfigurationControllerFeature
 
 
+__version__ = "1.0.0"
+
+
 class Server(IOServer):
     def __init__(
         self,
@@ -43,7 +46,7 @@ class Server(IOServer):
             server_name=server_name or "Syringe Pump Service",
             server_type=server_type or "TestServer",
             server_description=server_description or "The SiLA 2 driver for CETONI syringe pumps",
-            server_version=server_version or "0.1.0",
+            server_version=server_version or __version__,
             server_vendor_url=server_vendor_url or "https://www.cetoni.com",
             server_uuid=server_uuid,
         )
