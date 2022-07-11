@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from qmixsdk import qmixpump
 from sila2.framework.command.parameter import Parameter
 from sila2.framework.errors.validation_error import ValidationError

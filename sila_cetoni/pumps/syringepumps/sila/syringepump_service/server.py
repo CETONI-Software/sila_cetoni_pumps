@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List, Optional, Union
 from uuid import UUID
 
@@ -21,7 +23,6 @@ from .generated.pumpdrivecontrolservice import PumpDriveControlServiceFeature
 from .generated.pumpfluiddosingservice import PumpFluidDosingServiceFeature
 from .generated.pumpunitcontroller import PumpUnitControllerFeature
 from .generated.syringeconfigurationcontroller import SyringeConfigurationControllerFeature
-
 
 __version__ = "1.1.0"
 

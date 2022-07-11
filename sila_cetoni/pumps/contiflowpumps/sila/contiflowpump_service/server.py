@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional, Union
 from uuid import UUID
 
@@ -13,7 +15,6 @@ from .feature_implementations.continuousflowinitializationcontroller_impl import
 from .generated.continuousflowconfigurationservice import ContinuousFlowConfigurationServiceFeature
 from .generated.continuousflowdosingservice import ContinuousFlowDosingServiceFeature
 from .generated.continuousflowinitializationcontroller import ContinuousFlowInitializationControllerFeature
-
 
 __version__ = "1.1.0"
 
