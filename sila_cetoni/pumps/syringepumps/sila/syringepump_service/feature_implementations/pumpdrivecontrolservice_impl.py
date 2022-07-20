@@ -15,7 +15,7 @@ from sila2.framework.command.execution_info import CommandExecutionStatus
 from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
-from sila_cetoni.application.config import Config
+from sila_cetoni.application.server_configuration import ServerConfiguration
 from sila_cetoni.application.system import ApplicationSystem
 
 from ..generated.pumpdrivecontrolservice import (
@@ -47,7 +47,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
     __pump: Pump
     __is_initializing: bool
     __system: ApplicationSystem
-    __config: Config
+    __config: ServerConfiguration
     __stop_event: Event
 
     __CALIBRATION_TIMEOUT = datetime.timedelta(seconds=60)
@@ -57,7 +57,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         self.__pump = pump
         self.__is_initializing = False
         self.__system = ApplicationSystem()
-        self.__config = Config(self.__pump.get_pump_name(), self.__system.device_config.name)
+        self.__config = ServerConfiguration(self.__pump.get_pump_name(), self.__system.device_config.name)
         self.__stop_event = Event()
 
         if not self.__pump.is_position_sensing_initialized():
