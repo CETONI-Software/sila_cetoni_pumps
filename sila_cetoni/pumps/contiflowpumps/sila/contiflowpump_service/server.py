@@ -16,7 +16,7 @@ from .generated.continuousflowconfigurationservice import ContinuousFlowConfigur
 from .generated.continuousflowdosingservice import ContinuousFlowDosingServiceFeature
 from .generated.continuousflowinitializationcontroller import ContinuousFlowInitializationControllerFeature
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 
 class Server(SyringePumpServer):
