@@ -18,13 +18,18 @@ Types of changes
 
 ## Unreleased
 
+### Changed
+
+- Use the server name as the name for `ServerConfiguration`
 
 ## v1.1.0
 
 ### Changed
+
 - Bump sila2 to v0.8.2
 
 ### Fixed
+
 - When calling the `EnablePumpDrive`/`DisablePumpDrive` Commands the `PumpDriveState` Property is updated to immediately
   reflect the new state
 
@@ -35,6 +40,7 @@ First release of sila_cetoni
 This is the pumps plugin which adds support for controlling CETONI syringe and contiflow pump devices via SiLA 2
 
 ### Added
+
 - ForceMonitoringService feature and feature implementation
 - PumpDriveControlService feature and feature implementation
 - PumpFluidDosingService feature and feature implementation
