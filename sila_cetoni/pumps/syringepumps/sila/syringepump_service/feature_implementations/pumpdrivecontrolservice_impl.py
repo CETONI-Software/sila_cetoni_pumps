@@ -57,11 +57,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         self.__pump = pump
         self.__is_initializing = False
         self.__system = ApplicationSystem()
-        self.__config = ServerConfiguration(self.parent_server.server_name, self.__system.device_config.name)
         self.__stop_event = Event()
-
-        if not self.__pump.is_position_sensing_initialized():
-            self._restore_last_drive_position_counter()
 
         def update_fault_state(stop_event: Event):
             new_fault_state = fault_state = self.__pump.is_in_fault_state()
@@ -108,6 +104,17 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         executor.submit(update_fault_state, self.__stop_event)
         executor.submit(update_pump_drive_state, self.__stop_event)
         executor.submit(update_drive_position_counter, self.__stop_event)
+
+    def start(self) -> None:
+        self.__config = ServerConfiguration(self.parent_server.server_name, self.__system.device_config.name)
+        if not self.__pump.is_position_sensing_initialized():
+            self._restore_last_drive_position_counter()
+        super().start()
+
+    def stop(self) -> None:
+        super().stop()
+        self.__stop_event.set()
+        self.__config.write()
 
     def _restore_last_drive_position_counter(self):
         """
@@ -218,8 +225,3 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
             raise InitializationFailed(
                 f"The initialization did not end properly. The last error that occurred was {last_error}"
             )
-
-    def stop(self) -> None:
-        super().stop()
-        self.__stop_event.set()
-        self.__config.write()
