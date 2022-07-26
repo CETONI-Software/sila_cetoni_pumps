@@ -82,4 +82,5 @@ class ContinuousFlowDosingServiceImpl(ContinuousFlowDosingServiceBase):
             # raise QmixSDKSiLAError(self.__pump.read_last_error())
 
     def stop(self) -> None:
+        super().stop()
         self.__stop_event.set()

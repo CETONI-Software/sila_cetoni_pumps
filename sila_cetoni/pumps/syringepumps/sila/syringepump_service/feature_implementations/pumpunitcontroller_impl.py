@@ -109,4 +109,5 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
         self.__pump.set_volume_unit(prefix, volume_unit)
 
     def stop(self) -> None:
+        super().stop()
         self.__stop_event.set()

@@ -244,4 +244,5 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         self._wait_dosage_finished(instance)
 
     def stop(self) -> None:
+        super().stop()
         self.__stop_event.set()

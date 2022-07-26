@@ -140,4 +140,5 @@ class ForceMonitoringServiceImpl(ForceMonitoringServiceBase):
         self.__pump.write_force_limit(Force)
 
     def stop(self) -> None:
+        super().stop()
         self.__stop_event.set()

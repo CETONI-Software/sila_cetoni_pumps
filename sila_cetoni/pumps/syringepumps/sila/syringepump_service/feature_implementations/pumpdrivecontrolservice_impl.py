@@ -220,5 +220,6 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
             )
 
     def stop(self) -> None:
+        super().stop()
         self.__stop_event.set()
         self.__config.write()

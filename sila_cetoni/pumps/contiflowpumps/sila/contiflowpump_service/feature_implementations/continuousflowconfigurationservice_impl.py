@@ -132,4 +132,5 @@ class ContinuousFlowConfigurationServiceImpl(ContinuousFlowConfigurationServiceB
         self.__pump.set_device_property(ContiFlowProperty.OVERLAP_DURATION_S, OverlapDuration)
 
     def stop(self) -> None:
+        super().stop()
         self.__stop_event.set()

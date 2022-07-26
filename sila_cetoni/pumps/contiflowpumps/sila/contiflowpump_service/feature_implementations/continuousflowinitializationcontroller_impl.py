@@ -61,4 +61,5 @@ class ContinuousFlowInitializationControllerImpl(ContinuousFlowInitializationCon
             time.sleep(0.5)
 
     def stop(self) -> None:
+        super().stop()
         self.__stop_event.set()

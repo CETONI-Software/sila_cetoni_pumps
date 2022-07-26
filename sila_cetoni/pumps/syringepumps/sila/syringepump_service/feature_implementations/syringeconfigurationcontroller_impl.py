@@ -87,4 +87,5 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
         self.__pump.set_syringe_param(InnerDiameter, MaxPistonStroke)
 
     def stop(self) -> None:
+        super().stop()
         self.__stop_event.set()
