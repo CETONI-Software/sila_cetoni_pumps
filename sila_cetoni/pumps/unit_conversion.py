@@ -43,7 +43,9 @@ def evaluate_prefix(prefix_string, parameter: Parameter):
     }
     prefix = switcher.get(prefix_string)
     if not prefix:
-        raise ValidationError(parameter, f"Wrong prefix: '{prefix_string}' not supported")
+        err = ValidationError(f"Wrong prefix: '{prefix_string}' not supported")
+        err.parameter_fully_qualified_identifier = parameter.fully_qualified_identifier
+        raise err
 
     return prefix
 
@@ -58,7 +60,9 @@ def evaluate_volume_unit(volume_unit_string, parameter: Parameter):
     if volume_unit_string == "l":
         return qmixpump.VolumeUnit.litres
 
-    raise ValidationError(parameter, f"Wrong volume unit: '{volume_unit_string}' not supported")
+    err = ValidationError(f"Wrong volume unit: '{volume_unit_string}' not supported")
+    err.parameter_fully_qualified_identifier = parameter.fully_qualified_identifier
+    raise err
 
 
 def evaluate_time_unit(time_unit_string, parameter: Parameter):
@@ -72,7 +76,9 @@ def evaluate_time_unit(time_unit_string, parameter: Parameter):
 
     time_unit = switcher.get(time_unit_string)
     if not time_unit:
-        raise ValidationError(parameter, f"Wrong time_unit: '{time_unit_string}' not supported")
+        err = ValidationError(f"Wrong time_unit: '{time_unit_string}' not supported")
+        err.parameter_fully_qualified_identifier = parameter.fully_qualified_identifier
+        raise err
 
     return time_unit
 

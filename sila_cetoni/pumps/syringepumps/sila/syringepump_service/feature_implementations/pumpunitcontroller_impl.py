@@ -92,10 +92,13 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
             requested_time_unit=flow_unit.TimeUnit,
         )
         # except ValueError:
-        #     raise ValidationError(
-        #         PumpUnitControllerFeature["SetFlowUnit"].parameters.fields[0],
+        #     err = ValidationError(
         #         "The given flow unit is malformed. It has to be something like 'ml/s', for instance."
         #     )
+        #     err.parameter_fully_qualified_identifier = (
+        #         PumpUnitControllerFeature["SetFlowUnit"].parameters.fields[0].fully_qualified_identifier
+        #     )
+        #     raise err
         # else:
         self.__pump.set_flow_unit(prefix, volume_unit, time_unit)
 

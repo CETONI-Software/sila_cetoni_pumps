@@ -77,10 +77,11 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
 
         def _validate(value: float, parameter: str, parameter_id: int):
             if value < 0:
-                raise ValidationError(
-                    SyringeConfigurationControllerFeature["SetSyringeParameters"].parameters.fields[parameter_id],
-                    f"The {parameter} ({value}) is invalid. It cannot be less than 0!",
+                err = ValidationError(f"The {parameter} ({value}) is invalid. It cannot be less than 0!")
+                err.parameter_fully_qualified_identifier = (
+                    SyringeConfigurationControllerFeature["SetSyringeParameters"].parameters.fields[parameter_id].fully_qualified_identifier
                 )
+                raise err
 
         _validate(InnerDiameter, "InnerDiameter", 0)
         _validate(MaxPistonStroke, "MaxPistonStroke", 1)

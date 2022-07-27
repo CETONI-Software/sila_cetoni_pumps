@@ -38,27 +38,30 @@ def validate(
     )
     if flow_rate <= 0 or flow_rate > max_flow_rate:
         unit = uc.flow_unit_to_string(pump.get_flow_unit())
-        raise ValidationError(
-            command.parameters.fields[flow_rate_id],
+        err = ValidationError(
             msg.format(
                 param="flow rate",
                 unit=unit,
                 exclusive="(exclusive)",
                 requested_val=flow_rate,
                 max_val=max_flow_rate,
-            ),
+            )
         )
+        err.parameter_fully_qualified_identifier = command.parameters.fields[flow_rate_id].fully_qualified_identifier
+        raise err
     if fill_level is not None and (fill_level < 0 or fill_level > max_fill_level):
         unit = uc.volume_unit_to_string(pump.get_volume_unit())
-        raise ValidationError(
-            command.parameters.fields[fill_level_id],
+        err = ValidationError(
             msg.format(param="fill level", unit=unit, exclusive="", requested_val=fill_level, max_val=max_fill_level),
         )
+        err.parameter_fully_qualified_identifier = command.parameters.fields[fill_level_id].fully_qualified_identifier
+        raise err
     if volume is not None and (volume <= 0 or volume > max_fill_level):
         unit = uc.volume_unit_to_string(pump.get_volume_unit())
-        raise ValidationError(
-            command.parameters.fields[volume_id],
+        err = ValidationError(
             msg.format(
                 param="volume", unit=unit, exclusive="(exclusive)", requested_val=volume, max_val=max_fill_level
-            ),
+            )
         )
+        err.parameter_fully_qualified_identifier = command.parameters.fields[volume_id].fully_qualified_identifier
+        raise err

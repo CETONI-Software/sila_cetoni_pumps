@@ -113,12 +113,16 @@ class ContinuousFlowConfigurationServiceImpl(ContinuousFlowConfigurationServiceB
                 ContiFlowProperty.SWITCHING_MODE, self.__ALLOWED_SWITCHING_MODES.get(SwitchingMode)
             )
         except KeyError:
-            raise ValidationError(
-                ContinuousFlowConfigurationServiceFeature["SetSwitchingMode"].parameters.fields[0],
-                "The given value for the Contiflow Switching Mode is invalid. Allowed values are: {}".format(
-                    ", ".join(self.__ALLOWED_SWITCHING_MODES.keys())
-                ),
+            err = ValidationError(
+                "The given value for the Contiflow Switching Mode is invalid. Allowed values are: "
+                + ", ".join(self.__ALLOWED_SWITCHING_MODES.keys())
             )
+            err.parameter_fully_qualified_identifier = (
+                ContinuousFlowConfigurationServiceFeature["SetSwitchingMode"]
+                .parameters.fields[0]
+                .fully_qualified_identifier
+            )
+            raise err
 
     def SetRefillFlowRate(self, RefillFlowRate: float, *, metadata: MetadataDict) -> SetRefillFlowRate_Responses:
         self.__pump.set_device_property(ContiFlowProperty.REFILL_FLOW, RefillFlowRate)
