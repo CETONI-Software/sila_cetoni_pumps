@@ -96,11 +96,6 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
                     self.update_DrivePositionCounter(pos_counter)
                 time.sleep(0.1)
 
-        # initial values
-        self.update_FaultState(self.__pump.is_in_fault_state())
-        self.update_PumpDriveState("Enabled" if self.__pump.is_enabled() else "Disabled")
-        self.update_DrivePositionCounter(self.__pump.get_position_counter_value())
-
         executor.submit(update_fault_state, self.__stop_event)
         executor.submit(update_pump_drive_state, self.__stop_event)
         executor.submit(update_drive_position_counter, self.__stop_event)
@@ -109,6 +104,12 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         self.__config = ServerConfiguration(self.parent_server.server_name, self.__system.device_config.name)
         if not self.__pump.is_position_sensing_initialized():
             self._restore_last_drive_position_counter()
+
+        # initial property values
+        self.update_FaultState(self.__pump.is_in_fault_state())
+        self.update_PumpDriveState("Enabled" if self.__pump.is_enabled() else "Disabled")
+        self.update_DrivePositionCounter(self.__pump.get_position_counter_value())
+
         super().start()
 
     def stop(self) -> None:
