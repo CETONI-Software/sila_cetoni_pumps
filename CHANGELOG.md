@@ -18,6 +18,16 @@ Types of changes
 
 ## Unreleased
 
+## v1.4.0
+
+Sync with sila_cetoni v1.4.0
+
+### Fixed
+
+- Raising of `ValidationError`s works again
+- Validation of PumpFluidDosingService/Command/DoseVolume/Parameter/Volume
+- Setting the initial property values of PumpDriveControlService
+
 ## v1.3.0
 
 Sync with sila_cetoni v1.3.0
