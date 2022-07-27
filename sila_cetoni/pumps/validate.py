@@ -29,12 +29,13 @@ def validate(
         :param volume_id: The index of the Volume parameter in the list of parameters
     """
 
+    current_fill_level = pump.get_fill_level()
     max_fill_level = pump.get_volume_max()
     max_flow_rate = pump.get_flow_rate_max()
 
     msg = (
-        "The requested {param} ({requested_val} {unit}) has to be in the range between 0 {unit} {exclusive} and "
-        "{max_val} {unit} for this pump."
+        "The requested {param} ({requested_val:.3} {unit}) has to be in the range between 0 {unit} {exclusive} and "
+        "{max_val:.3} {unit} for this pump."
     )
     if flow_rate <= 0 or flow_rate > max_flow_rate:
         unit = uc.flow_unit_to_string(pump.get_flow_unit())
@@ -56,11 +57,22 @@ def validate(
         )
         err.parameter_fully_qualified_identifier = command.parameters.fields[fill_level_id].fully_qualified_identifier
         raise err
-    if volume is not None and (volume <= 0 or volume > max_fill_level):
+    if volume is not None and (
+        # negative volume indicates aspiration => current_fill_level + abs(volume) must not be more than max_fill_level
+        (volume < 0 and abs(volume) + current_fill_level > max_fill_level)
+        # positive volume indicates dispensation => volume must not be more than current_fill_level
+        or (volume > 0 and volume > current_fill_level)
+        # cannot dose volume of 0
+        or volume == 0
+    ):
         unit = uc.volume_unit_to_string(pump.get_volume_unit())
         err = ValidationError(
             msg.format(
-                param="volume", unit=unit, exclusive="(exclusive)", requested_val=volume, max_val=max_fill_level
+                param="volume",
+                unit=unit,
+                exclusive="(exclusive)",
+                requested_val=volume,
+                max_val=max_fill_level - current_fill_level if volume < 0 else current_fill_level,
             )
         )
         err.parameter_fully_qualified_identifier = command.parameters.fields[volume_id].fully_qualified_identifier

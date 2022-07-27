@@ -234,8 +234,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             raise SystemNotOperationalError(PumpFluidDosingServiceFeature["GenerateFlow"])
 
         # `FlowRate` is negative to indicate aspiration of fluid.
-        # Since `validate` tests against 0 and the max flow rate of
-        # the pump, we pass the absolute value of the `FlowRate`.
+        # Since `validate` tests against 0 and the max flow rate of the pump, we pass the absolute value of `FlowRate`.
         validate(self.__pump, PumpFluidDosingServiceFeature["GenerateFlow"], abs(FlowRate), 0)
         self.__pump.stop_pumping()  # only one dosage allowed
         time.sleep(0.25)  # wait for the currently running dosage to catch up
