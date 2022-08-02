@@ -24,7 +24,7 @@ from .generated.pumpfluiddosingservice import PumpFluidDosingServiceFeature
 from .generated.pumpunitcontroller import PumpUnitControllerFeature
 from .generated.syringeconfigurationcontroller import SyringeConfigurationControllerFeature
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 
 class Server(IOServer):
