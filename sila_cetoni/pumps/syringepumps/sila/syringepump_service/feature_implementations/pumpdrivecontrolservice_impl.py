@@ -181,20 +181,15 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
             time.sleep(0.2)
         except DeviceError as err:
             self.__is_initializing = False
-            instance.progress = 100
-            instance.estimated_remaining_time = datetime.timedelta(0)
             if err.args[1] == -212:
                 # Device does not support this operation -> pump has an absolute encoder and does not need calibration
-                instance.status = CommandExecutionStatus.finishedSuccessfully
+                return
             else:
-                instance.status = CommandExecutionStatus.finishedWithError
                 raise InitializationFailed(err.args[2] if len(err.args) > 2 else err.args[0])
 
         calibration_finished = self.__pump.is_calibration_finished() or not self.__pump.is_enabled()
         if calibration_finished:
-            instance.status = CommandExecutionStatus.finishedSuccessfully
-            instance.progress = 100
-            instance.estimated_remaining_time = datetime.timedelta(0)
+            return
 
         timeout: datetime.timedelta = self.__CALIBRATION_TIMEOUT
         timer = PollingTimer(timeout.seconds * 1000)
@@ -204,19 +199,13 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
             time.sleep(POLLING_TIMEOUT.total_seconds())
             timeout -= POLLING_TIMEOUT
             if message_timer.is_expired():
-                instance.status = CommandExecutionStatus.running
-                instance.progress = 100 * (self.__CALIBRATION_TIMEOUT - timeout) / self.__CALIBRATION_TIMEOUT
+                instance.progress = (self.__CALIBRATION_TIMEOUT - timeout) / self.__CALIBRATION_TIMEOUT
                 instance.estimated_remaining_time = timeout
                 message_timer.restart()
             calibration_finished = self.__pump.is_calibration_finished()
 
-        if calibration_finished and not self.__pump.is_in_fault_state():
-            instance.status = CommandExecutionStatus.finishedSuccessfully
-        else:
-            instance.status = CommandExecutionStatus.finishedWithError
-            logger.error("An unexpected error occurred: %s", self.__pump.read_last_error())
-        instance.progress = 100
-        instance.estimated_remaining_time = datetime.timedelta(0)
+        if not calibration_finished or self.__pump.is_in_fault_state():
+            raise RuntimeError(f"An unexpected error occurred: {self.__pump.read_last_error()}")
 
         self.__is_initializing = False
 

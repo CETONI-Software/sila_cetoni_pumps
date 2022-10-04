@@ -55,9 +55,8 @@ class ContinuousFlowInitializationControllerImpl(ContinuousFlowInitializationCon
         self.__pump.initialize()
 
         while self.__pump.is_initializing() and not timer.is_expired():
-            instance.status = CommandExecutionStatus.running
             instance.estimated_remaining_time = datetime.timedelta(seconds=timer.get_msecs_to_expiration() / 1000)
-            instance.progress = 100 * instance.estimated_remaining_time / MAX_WAIT_TIME
+            instance.progress = instance.estimated_remaining_time / MAX_WAIT_TIME
             time.sleep(0.5)
 
     def stop(self) -> None:

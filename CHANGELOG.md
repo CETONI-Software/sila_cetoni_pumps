@@ -18,6 +18,10 @@ Types of changes
 
 ## Unreleased
 
+### Fixed
+
+- Progress values of Observable Commands are now correctly bound between 0 and 1
+
 ## v1.6.0
 
 Sync with sila_cetoni v1.6.0
