@@ -18,6 +18,14 @@ Types of changes
 
 ## Unreleased
 
+## v1.7.0
+
+Synch with sila_cetoni v1.7.0
+
+### Changed
+
+- Bump required sila2 version to v0.10.0
+
 ### Fixed
 
 - Progress values of Observable Commands are now correctly bound between 0 and 1
