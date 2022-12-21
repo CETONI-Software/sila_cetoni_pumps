@@ -170,11 +170,6 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         if self.__is_initializing:
             raise InitializationNotFinished()
 
-        # send first info immediately
-        instance.status = CommandExecutionStatus.running
-        instance.progress = 0
-        instance.estimated_remaining_time = self.__CALIBRATION_TIMEOUT
-
         self.__is_initializing = True
         try:
             self.__pump.calibrate()

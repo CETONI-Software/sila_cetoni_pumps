@@ -150,10 +150,6 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         logger.debug("flow_in_sec: %f", flow_in_sec)
         dosing_time = datetime.timedelta(seconds=self.__pump.get_target_volume() / flow_in_sec + 2)  # +2 sec buffer
         logger.debug("dosing_time_s: %fs", dosing_time.seconds)
-        # send first info immediately
-        instance.status = CommandExecutionStatus.running
-        instance.progress = 0
-        instance.estimated_remaining_time = dosing_time
 
         timer = PollingTimer(period_ms=dosing_time.seconds * 1000)
         message_timer = PollingTimer(period_ms=500)

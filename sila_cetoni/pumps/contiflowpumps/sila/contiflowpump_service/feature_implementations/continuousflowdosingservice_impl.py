@@ -66,20 +66,15 @@ class ContinuousFlowDosingServiceImpl(ContinuousFlowDosingServiceBase):
 
         self.__pump.generate_flow(FlowRate)
 
-        # send first info immediately
-        instance.status = CommandExecutionStatus.running
+        instance.begin_execution()
 
         is_pumping = True
         while is_pumping:
             time.sleep(0.5)
-            instance.status = CommandExecutionStatus.running
             is_pumping = self.__pump.is_pumping()
 
-        if not is_pumping and not self.__pump.is_in_fault_state():
-            instance.status = CommandExecutionStatus.finishedSuccessfully
-        else:
-            instance.status = CommandExecutionStatus.finishedWithError
-            # raise QmixSDKSiLAError(self.__pump.read_last_error())
+        if is_pumping or self.__pump.is_in_fault_state():
+            raise RuntimeError(f"Pump is in fault state. The last error that occurred was {self.__pump.read_last_error()!r}")
 
     def stop(self) -> None:
         super().stop()

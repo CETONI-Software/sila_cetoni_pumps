@@ -47,11 +47,6 @@ class ContinuousFlowInitializationControllerImpl(ContinuousFlowInitializationCon
         MAX_WAIT_TIME = datetime.timedelta(seconds=30)
         timer = PollingTimer(MAX_WAIT_TIME.seconds * 1000)
 
-        # send first info immediately
-        instance.status = CommandExecutionStatus.running
-        instance.progress = 0
-        instance.estimated_remaining_time = datetime.timedelta(seconds=timer.get_msecs_to_expiration() / 1000)
-
         self.__pump.initialize()
 
         while self.__pump.is_initializing() and not timer.is_expired():
