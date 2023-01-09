@@ -139,6 +139,9 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
 
         target_volume = self.__pump.get_target_volume()
         logger.debug("target volume: %f, current volume: %f", target_volume, self.__pump.get_fill_level())
+        if math.isclose(target_volume, 0, abs_tol=1e-05):
+            return
+            
         flow_in_sec = self.__pump.get_flow_is() / self.__pump.get_flow_unit().time_unitid.value
         if flow_in_sec == 0:
             # try again, maybe the pump didn't start pumping yet
