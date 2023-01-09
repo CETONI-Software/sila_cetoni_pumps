@@ -137,7 +137,7 @@ class ForceMonitoringServiceImpl(ForceMonitoringServiceBase):
     def SetForceLimit(self, ForceLimit: Force, *, metadata: MetadataDict) -> SetForceLimit_Responses:
         if not self.__system.state.is_operational():
             raise SystemNotOperationalError(ForceMonitoringServiceFeature["SetForceLimit"])
-        self.__pump.write_force_limit(Force)
+        self.__pump.write_force_limit(ForceLimit)
 
     def stop(self) -> None:
         super().stop()
