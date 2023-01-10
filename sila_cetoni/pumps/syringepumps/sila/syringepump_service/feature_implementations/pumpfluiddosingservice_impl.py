@@ -129,7 +129,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             dosing_time -= POLLING_TIMEOUT
             if message_timer.is_expired():
                 logger.info("Fill level: %s", self.__pump.get_fill_level())
-                instance.progress = self.__pump.get_dosed_volume() / target_volume
+                instance.progress = min(self.__pump.get_dosed_volume() / target_volume, 1)
                 instance.estimated_remaining_time = dosing_time
                 message_timer.restart()
             is_pumping = self.__pump.is_pumping()
