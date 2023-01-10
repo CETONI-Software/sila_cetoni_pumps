@@ -8,12 +8,11 @@ from threading import Event
 from typing import Any, Dict, Union
 
 from qmixsdk.qmixpump import Pump
-from sila2.framework import Command, FullyQualifiedIdentifier, Property
+from sila2.framework import Command, Property
 from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
-from sila2.framework.errors.validation_error import ValidationError
 from sila2.server import MetadataDict, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem, requires_operational_system
 
 from ..... import unit_conversion as uc
 from ..generated.pumpunitcontroller import (
@@ -25,16 +24,6 @@ from ..generated.pumpunitcontroller import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-class SystemNotOperationalError(UndefinedExecutionError):
-    def __init__(self, command_or_property: Union[Command, Property]):
-        super().__init__(
-            "Cannot {} {} because the system is not in an operational state.".format(
-                "execute" if isinstance(command_or_property, Command) else "read from",
-                command_or_property.fully_qualified_identifier,
-            )
-        )
 
 
 FlowUnit = namedtuple("FlowUnit", ["VolumeUnit", "TimeUnit"])
@@ -78,10 +67,8 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
         executor.submit(update_flow_unit, self.__stop_event)
         executor.submit(update_volume_unit, self.__stop_event)
 
+    @requires_operational_system(PumpUnitControllerFeature)
     def SetFlowUnit(self, FlowUnit: Any, *, metadata: MetadataDict) -> SetFlowUnit_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(PumpUnitControllerFeature["SetFlowUnit"])
-
         logger.debug(f"flow unit {FlowUnit} {type(FlowUnit)}")
 
         # try:
@@ -102,10 +89,8 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
         # else:
         self.__pump.set_flow_unit(prefix, volume_unit, time_unit)
 
+    @requires_operational_system(PumpUnitControllerFeature)
     def SetVolumeUnit(self, VolumeUnit: VolumeUnit, *, metadata: MetadataDict) -> SetVolumeUnit_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(PumpUnitControllerFeature["SetVolumeUnit"])
-
         prefix, volume_unit = uc.evaluate_units(
             parameter=PumpUnitControllerFeature["SetVolumeUnit"].parameters.fields[0], requested_volume_unit=VolumeUnit
         )

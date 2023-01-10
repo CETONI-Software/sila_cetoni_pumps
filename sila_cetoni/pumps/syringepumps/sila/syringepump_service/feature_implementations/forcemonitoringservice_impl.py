@@ -4,14 +4,11 @@ import math
 import time
 from concurrent.futures import Executor
 from threading import Event
-from typing import Any, Dict, Union
 
 from qmixsdk.qmixpump import Pump
-from sila2.framework import Command, FullyQualifiedIdentifier, Property
-from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 from sila2.server import MetadataDict, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem, requires_operational_system
 
 from ..generated.forcemonitoringservice import (
     ClearForceSafetyStop_Responses,
@@ -22,28 +19,6 @@ from ..generated.forcemonitoringservice import (
     ForceMonitoringServiceFeature,
     SetForceLimit_Responses,
 )
-
-
-class SystemNotOperationalError(UndefinedExecutionError):
-    def __init__(self, command_or_property: Union[Command, Property]):
-        super().__init__(
-            "Cannot {} {} because the system is not in an operational state.".format(
-                "execute" if isinstance(command_or_property, Command) else "read from",
-                command_or_property.fully_qualified_identifier,
-            )
-        )
-
-
-# TODO
-def requires_operational_system(func):
-    def wrapper():
-        print(func.__name__)
-        print(func.__class__)
-        print(func.__qualname__)
-        print(ApplicationSystem().state.is_operational())
-        func()
-
-    return wrapper
 
 
 class ForceMonitoringServiceImpl(ForceMonitoringServiceBase):
@@ -115,28 +90,20 @@ class ForceMonitoringServiceImpl(ForceMonitoringServiceBase):
         executor.submit(update_force_sensor_value, self.__stop_event)
         executor.submit(update_max_device_force, self.__stop_event)
 
-    @requires_operational_system
+    @requires_operational_system(ForceMonitoringServiceFeature)
     def ClearForceSafetyStop(self, *, metadata: MetadataDict) -> ClearForceSafetyStop_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(ForceMonitoringServiceFeature["ClearForceSafetyStop"])
         self.__pump.clear_force_safety_stop()
 
-    @requires_operational_system
+    @requires_operational_system(ForceMonitoringServiceFeature)
     def EnableForceMonitoring(self, *, metadata: MetadataDict) -> EnableForceMonitoring_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(ForceMonitoringServiceFeature["EnableForceMonitoring"])
         self.__pump.enable_force_monitoring(True)
 
-    @requires_operational_system
+    @requires_operational_system(ForceMonitoringServiceFeature)
     def DisableForceMonitoring(self, *, metadata: MetadataDict) -> DisableForceMonitoring_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(ForceMonitoringServiceFeature["DisableForceMonitoring"])
         self.__pump.enable_force_monitoring(False)
 
-    @requires_operational_system
+    @requires_operational_system(ForceMonitoringServiceFeature)
     def SetForceLimit(self, ForceLimit: Force, *, metadata: MetadataDict) -> SetForceLimit_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(ForceMonitoringServiceFeature["SetForceLimit"])
         self.__pump.write_force_limit(ForceLimit)
 
     def stop(self) -> None:

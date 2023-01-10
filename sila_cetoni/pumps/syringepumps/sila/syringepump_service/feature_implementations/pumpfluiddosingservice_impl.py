@@ -8,17 +8,12 @@ import re
 import time
 from concurrent.futures import Executor
 from threading import Event
-from typing import Any, Dict, Union
 
 from qmixsdk.qmixbus import PollingTimer
 from qmixsdk.qmixpump import Pump
-from sila2.framework import Command, FullyQualifiedIdentifier, Property
-from sila2.framework.command.execution_info import CommandExecutionStatus
-from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
-from sila2.framework.errors.validation_error import ValidationError
 from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem, requires_operational_system
 
 from .....validate import validate
 from ..generated.pumpfluiddosingservice import (
@@ -31,33 +26,6 @@ from ..generated.pumpfluiddosingservice import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-class SystemNotOperationalError(UndefinedExecutionError):
-    def __init__(self, command_or_property: Union[Command, Property]):
-        super().__init__(
-            "Cannot {} {} because the system is not in an operational state.".format(
-                "execute" if isinstance(command_or_property, Command) else "read from",
-                command_or_property.fully_qualified_identifier,
-            )
-        )
-
-
-# TODO
-def requires_operational_system(func):
-    def wrapper(self, *, metadata):
-        print(func.__name__)
-        print(func.__class__)
-        print(func.__module__)
-        print(func.__qualname__)
-        regex = re.compile("(\w+)Impl\.(\w+)")
-        feature, command = regex.search(func.__qualname__).group(1, 2)
-        print(feature, command)
-        # m = importlib.import_module(feature+"Feature")
-        print(ApplicationSystem().state.is_operational())
-        func(self, metadata=metadata)
-
-    return wrapper
 
 
 class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
@@ -121,10 +89,8 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         executor.submit(update_fill_level, self.__stop_event)
         executor.submit(update_max_fill_level, self.__stop_event)
 
-    @requires_operational_system
+    @requires_operational_system(PumpFluidDosingServiceFeature)
     def StopDosage(self, *, metadata: MetadataDict) -> StopDosage_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(PumpFluidDosingServiceFeature["StopDosage"])
         self.__pump.stop_pumping()
 
     def _wait_dosage_finished(self, instance: ObservableCommandInstance):
@@ -141,7 +107,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         logger.debug("target volume: %f, current volume: %f", target_volume, self.__pump.get_fill_level())
         if math.isclose(target_volume, 0, abs_tol=1e-05):
             return
-            
+
         flow_in_sec = self.__pump.get_flow_is() / self.__pump.get_flow_unit().time_unitid.value
         if flow_in_sec == 0:
             # try again, maybe the pump didn't start pumping yet
@@ -171,6 +137,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         if is_pumping or self.__pump.is_in_fault_state() or not self.__pump.is_enabled():
             raise RuntimeError(f"An unexpected error occurred: {self.__pump.read_last_error()}")
 
+    @requires_operational_system(PumpFluidDosingServiceFeature)
     def SetFillLevel(
         self,
         FillLevel: float,
@@ -179,9 +146,6 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         metadata: MetadataDict,
         instance: ObservableCommandInstance,
     ) -> SetFillLevel_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(PumpFluidDosingServiceFeature["SetFillLevel"])
-
         validate(
             self.__pump,
             PumpFluidDosingServiceFeature["SetFillLevel"],
@@ -196,6 +160,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         self.__pump.set_fill_level(FillLevel, FlowRate)
         self._wait_dosage_finished(instance)
 
+    @requires_operational_system(PumpFluidDosingServiceFeature)
     def DoseVolume(
         self,
         Volume: float,
@@ -204,9 +169,6 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         metadata: MetadataDict,
         instance: ObservableCommandInstance,
     ) -> DoseVolume_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(PumpFluidDosingServiceFeature["DoseVolume"])
-
         validate(self.__pump, PumpFluidDosingServiceFeature["DoseVolume"], FlowRate, 1, volume=Volume, volume_id=0)
         self.__pump.stop_pumping()  # only one dosage allowed
         time.sleep(0.25)  # wait for the currently running dosage to catch up
@@ -214,12 +176,10 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         self.__pump.pump_volume(Volume, FlowRate)
         self._wait_dosage_finished(instance)
 
+    @requires_operational_system(PumpFluidDosingServiceFeature)
     def GenerateFlow(
         self, FlowRate: float, *, metadata: MetadataDict, instance: ObservableCommandInstance
     ) -> GenerateFlow_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(PumpFluidDosingServiceFeature["GenerateFlow"])
-
         # `FlowRate` is negative to indicate aspiration of fluid.
         # Since `validate` tests against 0 and the max flow rate of the pump, we pass the absolute value of `FlowRate`.
         validate(self.__pump, PumpFluidDosingServiceFeature["GenerateFlow"], abs(FlowRate), 0)

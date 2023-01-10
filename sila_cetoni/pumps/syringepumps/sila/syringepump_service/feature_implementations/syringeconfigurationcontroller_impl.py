@@ -4,31 +4,18 @@ import math
 import time
 from concurrent.futures import Executor
 from threading import Event
-from typing import Any, Dict, Union
 
 from qmixsdk.qmixpump import Pump
-from sila2.framework import Command, FullyQualifiedIdentifier, Property
-from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 from sila2.framework.errors.validation_error import ValidationError
 from sila2.server import MetadataDict, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem, requires_operational_system
 
 from ..generated.syringeconfigurationcontroller import (
     SetSyringeParameters_Responses,
     SyringeConfigurationControllerBase,
     SyringeConfigurationControllerFeature,
 )
-
-
-class SystemNotOperationalError(UndefinedExecutionError):
-    def __init__(self, command_or_property: Union[Command, Property]):
-        super().__init__(
-            "Cannot {} {} because the system is not in an operational state.".format(
-                "execute" if isinstance(command_or_property, Command) else "read from",
-                command_or_property.fully_qualified_identifier,
-            )
-        )
 
 
 class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
@@ -69,17 +56,17 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
         executor.submit(update_inner_diameter, self.__stop_event)
         executor.submit(update_max_piston_stroke, self.__stop_event)
 
+    @requires_operational_system(SyringeConfigurationControllerFeature)
     def SetSyringeParameters(
         self, InnerDiameter: float, MaxPistonStroke: float, *, metadata: MetadataDict
     ) -> SetSyringeParameters_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(SyringeConfigurationControllerFeature["SetSyringeParameters"])
-
         def _validate(value: float, parameter: str, parameter_id: int):
             if value < 0:
                 err = ValidationError(f"The {parameter} ({value}) is invalid. It cannot be less than 0!")
                 err.parameter_fully_qualified_identifier = (
-                    SyringeConfigurationControllerFeature["SetSyringeParameters"].parameters.fields[parameter_id].fully_qualified_identifier
+                    SyringeConfigurationControllerFeature["SetSyringeParameters"]
+                    .parameters.fields[parameter_id]
+                    .fully_qualified_identifier
                 )
                 raise err
 

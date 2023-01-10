@@ -6,17 +6,14 @@ import time
 from concurrent.futures import Executor
 from queue import Queue
 from threading import Event
-from typing import Any, Dict, Optional, Union
+from typing import Optional
 
 from qmixsdk.qmixbus import DeviceError, PollingTimer
 from qmixsdk.qmixpump import Pump
-from sila2.framework import Command, FullyQualifiedIdentifier, Property
-from sila2.framework.command.execution_info import CommandExecutionStatus
-from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
 from sila_cetoni.application.server_configuration import ServerConfiguration
-from sila_cetoni.application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem, requires_operational_system
 
 from ..generated.pumpdrivecontrolservice import (
     DisablePumpDrive_Responses,
@@ -31,16 +28,6 @@ from ..generated.pumpdrivecontrolservice import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-class SystemNotOperationalError(UndefinedExecutionError):
-    def __init__(self, command_or_property: Union[Command, Property]):
-        super().__init__(
-            "Cannot {} {} because the system is not in an operational state.".format(
-                "execute" if isinstance(command_or_property, Command) else "read from",
-                command_or_property.fully_qualified_identifier,
-            )
-        )
 
 
 class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
@@ -135,25 +122,21 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         self.__config.pump_drive_position_counter = DrivePositionCounter
         return super().update_DrivePositionCounter(DrivePositionCounter, queue)
 
+    @requires_operational_system(PumpDriveControlServiceFeature)
     def EnablePumpDrive(self, *, metadata: MetadataDict) -> EnablePumpDrive_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(PumpDriveControlServiceFeature["EnablePumpDrive"])
         self.__pump.clear_fault()
         self.__pump.enable(True)
         self.update_PumpDriveState("Enabled" if self.__pump.is_enabled() else "Disabled")
 
+    @requires_operational_system(PumpDriveControlServiceFeature)
     def DisablePumpDrive(self, *, metadata: MetadataDict) -> DisablePumpDrive_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(PumpDriveControlServiceFeature["DisablePumpDrive"])
         self.__pump.enable(False)
         self.update_PumpDriveState("Enabled" if self.__pump.is_enabled() else "Disabled")
 
+    @requires_operational_system(PumpDriveControlServiceFeature)
     def RestoreDrivePositionCounter(
         self, DrivePositionCounterValue: int, *, metadata: MetadataDict
     ) -> RestoreDrivePositionCounter_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(PumpDriveControlServiceFeature["RestoreDrivePositionCounter"])
-
         try:
             self.__pump.restore_position_counter_value(DrivePositionCounterValue)
         except DeviceError as err:
@@ -161,12 +144,10 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
                 raise NotSupported(str(err))
             raise
 
+    @requires_operational_system(PumpDriveControlServiceFeature)
     def InitializePumpDrive(
         self, *, metadata: MetadataDict, instance: ObservableCommandInstance
     ) -> InitializePumpDrive_Responses:
-        if not self.__system.state.is_operational():
-            raise SystemNotOperationalError(PumpDriveControlServiceFeature["InitializePumpDrive"])
-
         if self.__is_initializing:
             raise InitializationNotFinished()
 
