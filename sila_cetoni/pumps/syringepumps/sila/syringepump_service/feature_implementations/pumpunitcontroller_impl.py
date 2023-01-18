@@ -12,7 +12,7 @@ from sila2.framework import Command, Property
 from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 from sila2.server import MetadataDict, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem, requires_operational_system
+from sila_cetoni.application.system import ApplicationSystem
 
 from ..... import unit_conversion as uc
 from ..generated.pumpunitcontroller import (
@@ -67,7 +67,7 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
         executor.submit(update_flow_unit, self.__stop_event)
         executor.submit(update_volume_unit, self.__stop_event)
 
-    @requires_operational_system(PumpUnitControllerFeature)
+    @ApplicationSystem.ensure_operational(PumpUnitControllerFeature)
     def SetFlowUnit(self, FlowUnit: Any, *, metadata: MetadataDict) -> SetFlowUnit_Responses:
         logger.debug(f"flow unit {FlowUnit} {type(FlowUnit)}")
 
@@ -89,7 +89,7 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
         # else:
         self.__pump.set_flow_unit(prefix, volume_unit, time_unit)
 
-    @requires_operational_system(PumpUnitControllerFeature)
+    @ApplicationSystem.ensure_operational(PumpUnitControllerFeature)
     def SetVolumeUnit(self, VolumeUnit: VolumeUnit, *, metadata: MetadataDict) -> SetVolumeUnit_Responses:
         prefix, volume_unit = uc.evaluate_units(
             parameter=PumpUnitControllerFeature["SetVolumeUnit"].parameters.fields[0], requested_volume_unit=VolumeUnit

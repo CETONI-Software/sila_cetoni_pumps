@@ -13,7 +13,7 @@ from qmixsdk.qmixpump import Pump
 from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
 from sila_cetoni.application.server_configuration import ServerConfiguration
-from sila_cetoni.application.system import ApplicationSystem, requires_operational_system
+from sila_cetoni.application.system import ApplicationSystem
 
 from ..generated.pumpdrivecontrolservice import (
     DisablePumpDrive_Responses,
@@ -122,18 +122,18 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         self.__config.pump_drive_position_counter = DrivePositionCounter
         return super().update_DrivePositionCounter(DrivePositionCounter, queue)
 
-    @requires_operational_system(PumpDriveControlServiceFeature)
+    @ApplicationSystem.ensure_operational(PumpDriveControlServiceFeature)
     def EnablePumpDrive(self, *, metadata: MetadataDict) -> EnablePumpDrive_Responses:
         self.__pump.clear_fault()
         self.__pump.enable(True)
         self.update_PumpDriveState("Enabled" if self.__pump.is_enabled() else "Disabled")
 
-    @requires_operational_system(PumpDriveControlServiceFeature)
+    @ApplicationSystem.ensure_operational(PumpDriveControlServiceFeature)
     def DisablePumpDrive(self, *, metadata: MetadataDict) -> DisablePumpDrive_Responses:
         self.__pump.enable(False)
         self.update_PumpDriveState("Enabled" if self.__pump.is_enabled() else "Disabled")
 
-    @requires_operational_system(PumpDriveControlServiceFeature)
+    @ApplicationSystem.ensure_operational(PumpDriveControlServiceFeature)
     def RestoreDrivePositionCounter(
         self, DrivePositionCounterValue: int, *, metadata: MetadataDict
     ) -> RestoreDrivePositionCounter_Responses:
@@ -144,7 +144,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
                 raise NotSupported(str(err))
             raise
 
-    @requires_operational_system(PumpDriveControlServiceFeature)
+    @ApplicationSystem.ensure_operational(PumpDriveControlServiceFeature)
     def InitializePumpDrive(
         self, *, metadata: MetadataDict, instance: ObservableCommandInstance
     ) -> InitializePumpDrive_Responses:

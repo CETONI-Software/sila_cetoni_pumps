@@ -9,7 +9,7 @@ from qmixsdk.qmixpump import Pump
 from sila2.framework.errors.validation_error import ValidationError
 from sila2.server import MetadataDict, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem, requires_operational_system
+from sila_cetoni.application.system import ApplicationSystem
 
 from ..generated.syringeconfigurationcontroller import (
     SetSyringeParameters_Responses,
@@ -56,7 +56,7 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
         executor.submit(update_inner_diameter, self.__stop_event)
         executor.submit(update_max_piston_stroke, self.__stop_event)
 
-    @requires_operational_system(SyringeConfigurationControllerFeature)
+    @ApplicationSystem.ensure_operational(SyringeConfigurationControllerFeature)
     def SetSyringeParameters(
         self, InnerDiameter: float, MaxPistonStroke: float, *, metadata: MetadataDict
     ) -> SetSyringeParameters_Responses:

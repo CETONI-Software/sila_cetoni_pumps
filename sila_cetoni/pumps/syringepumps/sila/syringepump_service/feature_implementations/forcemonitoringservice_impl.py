@@ -8,7 +8,7 @@ from threading import Event
 from qmixsdk.qmixpump import Pump
 from sila2.server import MetadataDict, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem, requires_operational_system
+from sila_cetoni.application.system import ApplicationSystem
 
 from ..generated.forcemonitoringservice import (
     ClearForceSafetyStop_Responses,
@@ -90,19 +90,19 @@ class ForceMonitoringServiceImpl(ForceMonitoringServiceBase):
         executor.submit(update_force_sensor_value, self.__stop_event)
         executor.submit(update_max_device_force, self.__stop_event)
 
-    @requires_operational_system(ForceMonitoringServiceFeature)
+    @ApplicationSystem.ensure_operational(ForceMonitoringServiceFeature)
     def ClearForceSafetyStop(self, *, metadata: MetadataDict) -> ClearForceSafetyStop_Responses:
         self.__pump.clear_force_safety_stop()
 
-    @requires_operational_system(ForceMonitoringServiceFeature)
+    @ApplicationSystem.ensure_operational(ForceMonitoringServiceFeature)
     def EnableForceMonitoring(self, *, metadata: MetadataDict) -> EnableForceMonitoring_Responses:
         self.__pump.enable_force_monitoring(True)
 
-    @requires_operational_system(ForceMonitoringServiceFeature)
+    @ApplicationSystem.ensure_operational(ForceMonitoringServiceFeature)
     def DisableForceMonitoring(self, *, metadata: MetadataDict) -> DisableForceMonitoring_Responses:
         self.__pump.enable_force_monitoring(False)
 
-    @requires_operational_system(ForceMonitoringServiceFeature)
+    @ApplicationSystem.ensure_operational(ForceMonitoringServiceFeature)
     def SetForceLimit(self, ForceLimit: Force, *, metadata: MetadataDict) -> SetForceLimit_Responses:
         self.__pump.write_force_limit(ForceLimit)
 

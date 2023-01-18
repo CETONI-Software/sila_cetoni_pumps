@@ -13,7 +13,7 @@ from qmixsdk.qmixbus import PollingTimer
 from qmixsdk.qmixpump import Pump
 from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem, requires_operational_system
+from sila_cetoni.application.system import ApplicationSystem
 
 from .....validate import validate
 from ..generated.pumpfluiddosingservice import (
@@ -89,7 +89,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         executor.submit(update_fill_level, self.__stop_event)
         executor.submit(update_max_fill_level, self.__stop_event)
 
-    @requires_operational_system(PumpFluidDosingServiceFeature)
+    @ApplicationSystem.ensure_operational(PumpFluidDosingServiceFeature)
     def StopDosage(self, *, metadata: MetadataDict) -> StopDosage_Responses:
         self.__pump.stop_pumping()
 
@@ -137,7 +137,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         if is_pumping or self.__pump.is_in_fault_state() or not self.__pump.is_enabled():
             raise RuntimeError(f"An unexpected error occurred: {self.__pump.read_last_error()}")
 
-    @requires_operational_system(PumpFluidDosingServiceFeature)
+    @ApplicationSystem.ensure_operational(PumpFluidDosingServiceFeature)
     def SetFillLevel(
         self,
         FillLevel: float,
@@ -160,7 +160,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         self.__pump.set_fill_level(FillLevel, FlowRate)
         self._wait_dosage_finished(instance)
 
-    @requires_operational_system(PumpFluidDosingServiceFeature)
+    @ApplicationSystem.ensure_operational(PumpFluidDosingServiceFeature)
     def DoseVolume(
         self,
         Volume: float,
@@ -176,7 +176,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         self.__pump.pump_volume(Volume, FlowRate)
         self._wait_dosage_finished(instance)
 
-    @requires_operational_system(PumpFluidDosingServiceFeature)
+    @ApplicationSystem.ensure_operational(PumpFluidDosingServiceFeature)
     def GenerateFlow(
         self, FlowRate: float, *, metadata: MetadataDict, instance: ObservableCommandInstance
     ) -> GenerateFlow_Responses:
