@@ -8,7 +8,7 @@ from threading import Event
 from qmixsdk.qmixpump import Pump
 from sila2.server import MetadataDict, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem, CetoniApplicationSystem
 
 from ..generated.forcemonitoringservice import (
     ClearForceSafetyStop_Responses,
@@ -21,6 +21,7 @@ from ..generated.forcemonitoringservice import (
 )
 
 
+@CetoniApplicationSystem.monitor_traffic
 class ForceMonitoringServiceImpl(ForceMonitoringServiceBase):
     __pump: Pump
     __system: ApplicationSystem

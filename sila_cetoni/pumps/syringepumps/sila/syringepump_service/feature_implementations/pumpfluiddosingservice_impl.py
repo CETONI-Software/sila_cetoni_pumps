@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 import datetime
-import importlib
 import logging
 import math
-import re
 import time
 from concurrent.futures import Executor
 from threading import Event
@@ -13,7 +11,7 @@ from qmixsdk.qmixbus import PollingTimer
 from qmixsdk.qmixpump import Pump
 from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem, CetoniApplicationSystem
 
 from .....validate import validate
 from ..generated.pumpfluiddosingservice import (
@@ -28,6 +26,7 @@ from ..generated.pumpfluiddosingservice import (
 logger = logging.getLogger(__name__)
 
 
+@CetoniApplicationSystem.monitor_traffic
 class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
     __pump: Pump
     __system: ApplicationSystem

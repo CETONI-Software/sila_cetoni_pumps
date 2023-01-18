@@ -5,14 +5,12 @@ import time
 from collections import namedtuple
 from concurrent.futures import Executor
 from threading import Event
-from typing import Any, Dict, Union
+from typing import Any
 
 from qmixsdk.qmixpump import Pump
-from sila2.framework import Command, Property
-from sila2.framework.errors.undefined_execution_error import UndefinedExecutionError
 from sila2.server import MetadataDict, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem, CetoniApplicationSystem
 
 from ..... import unit_conversion as uc
 from ..generated.pumpunitcontroller import (
@@ -29,6 +27,7 @@ logger = logging.getLogger(__name__)
 FlowUnit = namedtuple("FlowUnit", ["VolumeUnit", "TimeUnit"])
 
 
+@CetoniApplicationSystem.monitor_traffic
 class PumpUnitControllerImpl(PumpUnitControllerBase):
     __pump: Pump
     __system: ApplicationSystem

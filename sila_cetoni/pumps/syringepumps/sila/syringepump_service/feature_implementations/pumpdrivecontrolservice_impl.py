@@ -13,7 +13,7 @@ from qmixsdk.qmixpump import Pump
 from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
 from sila_cetoni.application.server_configuration import ServerConfiguration
-from sila_cetoni.application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem, CetoniApplicationSystem
 
 from ..generated.pumpdrivecontrolservice import (
     DisablePumpDrive_Responses,
@@ -30,6 +30,7 @@ from ..generated.pumpdrivecontrolservice import (
 logger = logging.getLogger(__name__)
 
 
+@CetoniApplicationSystem.monitor_traffic
 class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
     __pump: Pump
     __is_initializing: bool

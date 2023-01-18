@@ -9,7 +9,7 @@ from qmixsdk.qmixpump import Pump
 from sila2.framework.errors.validation_error import ValidationError
 from sila2.server import MetadataDict, SilaServer
 
-from sila_cetoni.application.system import ApplicationSystem
+from sila_cetoni.application.system import ApplicationSystem, CetoniApplicationSystem
 
 from ..generated.syringeconfigurationcontroller import (
     SetSyringeParameters_Responses,
@@ -18,6 +18,7 @@ from ..generated.syringeconfigurationcontroller import (
 )
 
 
+@CetoniApplicationSystem.monitor_traffic
 class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
     __pump: Pump
     __system: ApplicationSystem
