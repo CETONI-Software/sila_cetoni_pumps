@@ -49,18 +49,17 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
 
         def update_fault_state(stop_event: Event):
             new_fault_state = fault_state = self.__pump.is_in_fault_state()
-            while not stop_event.is_set():
+            while not stop_event.is_set(0.1):
                 if self.__system.state.is_operational():
                     new_fault_state = self.__pump.is_in_fault_state()
                 if new_fault_state != fault_state:
                     fault_state = new_fault_state
                     self.update_FaultState(fault_state)
-                time.sleep(0.1)
 
         def update_pump_drive_state(stop_event: Event):
             new_is_enabled = is_enabled = self.__pump.is_enabled() and self.__system.state.is_operational()
             new_is_initializing = is_initializing = self.__is_initializing
-            while not stop_event.is_set():
+            while not stop_event.is_set(0.1):
                 new_is_enabled = self.__pump.is_enabled() and self.__system.state.is_operational()
                 new_is_initializing = self.__is_initializing
                 if new_is_enabled != is_enabled or new_is_initializing != is_initializing:
@@ -69,20 +68,18 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
                     self.update_PumpDriveState(
                         "Initializing" if is_initializing else "Enabled" if is_enabled else "Disabled"
                     )
-                time.sleep(0.1)
 
         def update_drive_position_counter(stop_event: Event):
             new_pos_counter = pos_counter = (
                 self.__pump.get_position_counter_value() if self.__system.state.is_operational() else 0
             )
-            while not stop_event.is_set():
+            while not stop_event.is_set(0.1):
                 new_pos_counter = (
                     self.__pump.get_position_counter_value() if self.__system.state.is_operational() else 0
                 )
                 if new_pos_counter != pos_counter:
                     pos_counter = new_pos_counter
                     self.update_DrivePositionCounter(pos_counter)
-                time.sleep(0.1)
 
         executor.submit(update_fault_state, self.__stop_event)
         executor.submit(update_pump_drive_state, self.__stop_event)

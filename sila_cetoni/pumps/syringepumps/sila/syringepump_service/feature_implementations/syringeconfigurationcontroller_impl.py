@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import math
-import time
 from concurrent.futures import Executor
 from threading import Event
 
@@ -32,23 +31,21 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
 
         def update_inner_diameter(stop_event: Event):
             new_inner_diameter = inner_diameter = self.__pump.get_syringe_param().inner_diameter_mm
-            while not stop_event.is_set():
+            while not stop_event.wait(0.1):
                 if self.__system.state.is_operational():
                     new_inner_diameter = self.__pump.get_syringe_param().inner_diameter_mm
                 if not math.isclose(new_inner_diameter, inner_diameter):
                     inner_diameter = new_inner_diameter
                     self.update_InnerDiameter(inner_diameter)
-                time.sleep(0.1)
 
         def update_max_piston_stroke(stop_event: Event):
             new_max_piston_stroke = max_piston_stroke = self.__pump.get_syringe_param().max_piston_stroke_mm
-            while not stop_event.is_set():
+            while not stop_event.wait(0.1):
                 if self.__system.state.is_operational():
                     new_max_piston_stroke = self.__pump.get_syringe_param().max_piston_stroke_mm
                 if not math.isclose(new_max_piston_stroke, max_piston_stroke):
                     max_piston_stroke = new_max_piston_stroke
                     self.update_MaxPistonStroke(max_piston_stroke)
-                time.sleep(0.1)
 
         # initial values
         self.update_InnerDiameter(self.__pump.get_syringe_param().inner_diameter_mm)

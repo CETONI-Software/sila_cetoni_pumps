@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import time
 from collections import namedtuple
 from concurrent.futures import Executor
 from threading import Event
@@ -41,23 +40,21 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
 
         def update_flow_unit(stop_event: Event):
             new_flow_unit = flow_unit = FlowUnit(*uc.flow_unit_to_tuple(self.__pump.get_flow_unit()))
-            while not stop_event.is_set():
+            while not stop_event.wait(0.1):
                 if self.__system.state.is_operational():
                     new_flow_unit = FlowUnit(*uc.flow_unit_to_tuple(self.__pump.get_flow_unit()))
                 if new_flow_unit != flow_unit:
                     flow_unit = new_flow_unit
                     self.update_FlowUnit(flow_unit)
-                time.sleep(0.1)
 
         def update_volume_unit(stop_event: Event):
             new_volume_unit = volume_unit = uc.volume_unit_to_string(self.__pump.get_volume_unit())
-            while not stop_event.is_set():
+            while not stop_event.wait(0.1):
                 if self.__system.state.is_operational():
                     new_volume_unit = uc.volume_unit_to_string(self.__pump.get_volume_unit())
                 if new_volume_unit != volume_unit:
                     volume_unit = new_volume_unit
                     self.update_VolumeUnit(volume_unit)
-                time.sleep(0.1)
 
         # initial values
         self.update_FlowUnit(FlowUnit(*uc.flow_unit_to_tuple(self.__pump.get_flow_unit())))

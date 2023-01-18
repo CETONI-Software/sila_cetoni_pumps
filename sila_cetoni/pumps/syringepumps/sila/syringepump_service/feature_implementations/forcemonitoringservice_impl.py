@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import math
-import time
 from concurrent.futures import Executor
 from threading import Event
 
@@ -35,48 +34,43 @@ class ForceMonitoringServiceImpl(ForceMonitoringServiceBase):
 
         def update_force_limit(stop_event: Event):
             new_force_limit = force_limit = self.__pump.get_force_limit()
-            while not stop_event.is_set():
+            while not stop_event.wait(0.1):
                 new_force_limit = self.__pump.get_force_limit()
                 if not math.isclose(new_force_limit, force_limit):
                     force_limit = new_force_limit
                     self.update_ForceLimit(force_limit)
-                time.sleep(0.1)
 
         def update_force_monitoring_enabled(stop_event: Event):
             new_is_enabled = is_enabled = self.__pump.is_force_monitoring_enabled()
-            while not stop_event.is_set():
+            while not stop_event.wait(0.1):
                 new_is_enabled = self.__pump.is_force_monitoring_enabled()
                 if not math.isclose(new_is_enabled, is_enabled):
                     is_enabled = new_is_enabled
                     self.update_ForceMonitoringEnabled(is_enabled)
-                time.sleep(0.1)
 
         def update_force_safety_stop_active(stop_event: Event):
             new_is_active = is_active = self.__pump.is_force_safety_stop_active()
-            while not stop_event.is_set():
+            while not stop_event.wait(0.1):
                 new_is_active = self.__pump.is_force_safety_stop_active()
                 if not math.isclose(new_is_active, is_active):
                     is_active = new_is_active
                     self.update_ForceSafetyStopActive(is_active)
-                time.sleep(0.1)
 
         def update_force_sensor_value(stop_event: Event):
             new_force = force = self.__pump.read_force_sensor()
-            while not stop_event.is_set():
+            while not stop_event.wait(0.1):
                 new_force = self.__pump.read_force_sensor()
                 if not math.isclose(new_force, force, abs_tol=1.0e-3):
                     force = new_force
                     self.update_ForceSensorValue(force)
-                time.sleep(0.1)
 
         def update_max_device_force(stop_event: Event):
             new_max_force = max_force = self.__pump.get_max_device_force()
-            while not stop_event.is_set():
+            while not stop_event.wait(0.1):
                 new_max_force = self.__pump.get_max_device_force()
                 if not math.isclose(new_max_force, max_force):
                     max_force = new_max_force
                     self.update_MaxDeviceForce(max_force)
-                time.sleep(0.1)
 
         # initial values
         self.update_ForceLimit(self.__pump.get_force_limit())
