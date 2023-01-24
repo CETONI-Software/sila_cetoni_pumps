@@ -18,6 +18,17 @@ Types of changes
 
 ## Unreleased
 
+### Changed
+
+- Don't set the Command Execution status explicitly - this is done by sila_python
+- `ApplicationSystem.ensure_operational` is now used instead of manually checking the `ApplicationSystem`'s state
+- All syringe pump features are now monitored for traffic by `CetoniApplicationSystem`
+
+### Fixed
+
+- Error when the pump didn't start pumping because ot was already at the target volume
+- Invalid Command Execution Progress Info value
+
 ## v1.8.0
 
 Sync with sila_cetoni v1.8.0 release
