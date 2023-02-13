@@ -10,9 +10,12 @@ if TYPE_CHECKING:
 from qmixsdk import qmixbus, qmixpump
 
 from sila_cetoni.application.device import CetoniDevice
+from sila_cetoni.utils import get_version
 
 from .contiflowpumps.sila.contiflowpump_service.server import Server as ContiflowPumpServer
 from .syringepumps.sila.syringepump_service.server import Server as SyringePumpServer
+
+__version__ = get_version(__name__)
 
 logger = logging.getLogger(__name__)
 

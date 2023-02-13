@@ -23,8 +23,6 @@ from .generated.pumpfluiddosingservice import PumpFluidDosingServiceFeature
 from .generated.pumpunitcontroller import PumpUnitControllerFeature
 from .generated.syringeconfigurationcontroller import SyringeConfigurationControllerFeature
 
-__version__ = "1.8.0"
-
 
 class Server(IOServer):
     def __init__(
@@ -39,6 +37,8 @@ class Server(IOServer):
         server_vendor_url: str = "",
         server_uuid: Optional[Union[str, UUID]] = None,
     ):
+        from .... import __version__
+
         super().__init__(
             io_channels,
             server_name=server_name or "Syringe Pump Service",
