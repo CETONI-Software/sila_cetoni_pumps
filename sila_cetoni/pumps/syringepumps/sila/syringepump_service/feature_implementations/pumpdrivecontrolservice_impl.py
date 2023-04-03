@@ -72,10 +72,19 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
                 self.update_DrivePositionCounter,
             )
         )
+        self.run_periodically(self.__config.write, 60)
 
     def start(self) -> None:
         if not self.__pump.is_position_sensing_initialized():
-            self._restore_last_drive_position_counter()
+            drive_pos_counter = self.__config["pump"].getint("drive_position_counter")
+            if drive_pos_counter is not None:
+                logger.debug(f"Restoring drive position counter: {drive_pos_counter}")
+                self.__pump.restore_position_counter_value(drive_pos_counter)
+            else:
+                logger.warning(
+                    f"Could not read drive position counter for {self.__pump.get_pump_name()} from config file. "
+                    "Reference move needed!"
+                )
 
         super().start()
 
@@ -83,22 +92,8 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
         super().stop()
         self.__config.write()
 
-    def _restore_last_drive_position_counter(self):
-        """
-        Reads the last drive position counter from the server's config file.
-        """
-        drive_pos_counter = self.__config.pump_drive_position_counter
-        if drive_pos_counter is not None:
-            logger.debug(f"Restoring drive position counter: {drive_pos_counter}")
-            self.__pump.restore_position_counter_value(drive_pos_counter)
-        else:
-            logger.warning(
-                f"Could not read drive position counter for {self.__pump.get_pump_name()} from config file. "
-                "Reference move needed!"
-            )
-
     def update_DrivePositionCounter(self, DrivePositionCounter: int, queue: Optional[Queue[int]] = None):
-        self.__config.pump_drive_position_counter = DrivePositionCounter
+        self.__config["pump"]["drive_position_counter"] = str(DrivePositionCounter)
         return super().update_DrivePositionCounter(DrivePositionCounter, queue)
 
     @ApplicationSystem.ensure_operational(PumpDriveControlServiceFeature)
