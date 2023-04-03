@@ -50,26 +50,24 @@ class Server(IOServer):
         )
 
         # common features
-        self.pumpdrivecontrolservice = PumpDriveControlServiceImpl(self, pump, self.child_task_executor)
-        self.pumpunitcontroller = PumpUnitControllerImpl(self, pump, self.child_task_executor)
+        self.pumpdrivecontrolservice = PumpDriveControlServiceImpl(self, pump)
+        self.pumpunitcontroller = PumpUnitControllerImpl(self, pump)
         self.set_feature_implementation(PumpDriveControlServiceFeature, self.pumpdrivecontrolservice)
         self.set_feature_implementation(PumpUnitControllerFeature, self.pumpunitcontroller)
 
         if not isinstance(pump, ContiFlowPump):
             # features for real syringe pumps only
-            self.syringeconfigurationcontroller = SyringeConfigurationControllerImpl(
-                self, pump, self.child_task_executor
-            )
+            self.syringeconfigurationcontroller = SyringeConfigurationControllerImpl(self, pump)
             self.set_feature_implementation(SyringeConfigurationControllerFeature, self.syringeconfigurationcontroller)
 
             try:
                 if pump.has_force_monitoring():
-                    self.forcemonitoringservice = ForceMonitoringServiceImpl(self, pump, self.child_task_executor)
+                    self.forcemonitoringservice = ForceMonitoringServiceImpl(self, pump)
                     self.set_feature_implementation(ForceMonitoringServiceFeature, self.forcemonitoringservice)
             except AttributeError:
                 pass
 
-            self.pumpfluiddosingservice = PumpFluidDosingServiceImpl(self, pump, self.child_task_executor)
+            self.pumpfluiddosingservice = PumpFluidDosingServiceImpl(self, pump)
             self.set_feature_implementation(PumpFluidDosingServiceFeature, self.pumpfluiddosingservice)
 
             if valve:
