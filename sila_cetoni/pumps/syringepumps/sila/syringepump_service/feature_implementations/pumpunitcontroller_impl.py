@@ -8,6 +8,7 @@ from typing import Any
 from qmixsdk.qmixpump import Pump
 from sila2.server import MetadataDict, SilaServer
 
+from sila_cetoni.application.server_configuration import ServerConfiguration
 from sila_cetoni.application.system import ApplicationSystem, CetoniApplicationSystem
 from sila_cetoni.utils import PropertyUpdater, not_equal
 
@@ -30,11 +31,13 @@ FlowUnit = namedtuple("FlowUnit", ["VolumeUnit", "TimeUnit"])
 class PumpUnitControllerImpl(PumpUnitControllerBase):
     __pump: Pump
     __system: ApplicationSystem
+    __config: ServerConfiguration
 
     def __init__(self, server: SilaServer, pump: Pump):
         super().__init__(server)
         self.__pump = pump
         self.__system = ApplicationSystem()
+        self.__config = ServerConfiguration(self.parent_server.server_name, self.__system.device_config.name)
 
         self.run_periodically(
             PropertyUpdater(
@@ -53,27 +56,36 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
             )
         )
 
+    def start(self) -> None:
+        FlowUnit_Struct = namedtuple("FlowUnit_Struct", ("VolumeUnit", "TimeUnit"))
+        try:
+            self.SetFlowUnit(FlowUnit_Struct(*self.__config["pump"]["flow_unit"].split("/")), metadata={})
+        except KeyError:
+            logger.warning(
+                f"Restoring flow unit failed for {self.parent_server.server_name} - could not read value from config file!"
+            )
+        try:
+            self.SetVolumeUnit(self.__config["pump"]["volume_unit"], metadata={})
+        except KeyError:
+            logger.warning(
+                f"Restoring volume unit failed for {self.parent_server.server_name} - could not read value from config file!"
+            )
+
+        super().start()
+
     @ApplicationSystem.ensure_operational(PumpUnitControllerFeature)
     def SetFlowUnit(self, FlowUnit: Any, *, metadata: MetadataDict) -> SetFlowUnit_Responses:
         logger.debug(f"flow unit {FlowUnit} {type(FlowUnit)}")
 
-        # try:
         flow_unit = FlowUnit
         prefix, volume_unit, time_unit = uc.evaluate_units(
             parameter=PumpUnitControllerFeature["SetFlowUnit"].parameters.fields[0],
             requested_volume_unit=flow_unit.VolumeUnit,
             requested_time_unit=flow_unit.TimeUnit,
         )
-        # except ValueError:
-        #     err = ValidationError(
-        #         "The given flow unit is malformed. It has to be something like 'ml/s', for instance."
-        #     )
-        #     err.parameter_fully_qualified_identifier = (
-        #         PumpUnitControllerFeature["SetFlowUnit"].parameters.fields[0].fully_qualified_identifier
-        #     )
-        #     raise err
-        # else:
         self.__pump.set_flow_unit(prefix, volume_unit, time_unit)
+        self.__config["pump"]["flow_unit"] = f"{flow_unit.VolumeUnit}/{flow_unit.TimeUnit}"
+        self.__config.write()
 
     @ApplicationSystem.ensure_operational(PumpUnitControllerFeature)
     def SetVolumeUnit(self, VolumeUnit: VolumeUnit, *, metadata: MetadataDict) -> SetVolumeUnit_Responses:
@@ -81,3 +93,5 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
             parameter=PumpUnitControllerFeature["SetVolumeUnit"].parameters.fields[0], requested_volume_unit=VolumeUnit
         )
         self.__pump.set_volume_unit(prefix, volume_unit)
+        self.__config["pump"]["volume_unit"] = VolumeUnit
+        self.__config.write()
