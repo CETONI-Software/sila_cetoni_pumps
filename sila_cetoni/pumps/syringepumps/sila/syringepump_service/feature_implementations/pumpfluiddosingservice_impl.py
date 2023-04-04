@@ -31,11 +31,13 @@ logger = logging.getLogger(__name__)
 @CetoniApplicationSystem.monitor_traffic
 class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
     __pump: Pump
+    __stop_dosage_called: bool
     __system: ApplicationSystem
 
     def __init__(self, server: SilaServer, pump: Pump):
         super().__init__(server)
         self.__pump = pump
+        self.__stop_dosage_called = False
         self.__system = ApplicationSystem()
 
         not_close = negate(math.isclose)
@@ -82,6 +84,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
 
     @ApplicationSystem.ensure_operational(PumpFluidDosingServiceFeature)
     def StopDosage(self, *, metadata: MetadataDict) -> StopDosage_Responses:
+        self.__stop_dosage_called = True
         self.__pump.stop_pumping()
 
     def _wait_dosage_finished(self, instance: ObservableCommandInstance):
@@ -107,6 +110,8 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         if flow_in_sec == 0:
             raise RuntimeError(f"The pump didn't start pumping. Last error: {self.__pump.read_last_error()}")
 
+        self.__stop_dosage_called = False
+
         logger.debug("flow_in_sec: %f", flow_in_sec)
         dosing_time = datetime.timedelta(seconds=self.__pump.get_target_volume() / flow_in_sec + 2)  # +2 sec buffer
         logger.debug("dosing_time_s: %fs", dosing_time.seconds)
@@ -126,9 +131,23 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             is_pumping = self.__pump.is_pumping()
 
         time.sleep(0.2)  #: wait for a potential error to propagate from the EPOS to the SDK
+        last_error = self.__pump.read_last_error()
+
+        if (
+            not math.isclose(target_volume, self.__pump.get_dosed_volume(), abs_tol=1e-02)
+            and not self.__stop_dosage_called
+        ):
+            # there must be an error if we did not reach the target
+            max_wait_for_error_timer = PollingTimer(period_ms=2000)  #: wait for max. 2 seconds
+            while last_error.code == 0 and not max_wait_for_error_timer.is_expired():
+                time.sleep(0.1)
+            if max_wait_for_error_timer.is_expired() and last_error.code == 0:
+                raise RuntimeError(f"The pump did not reach its target volume but there was no error from the drive!")
 
         if is_pumping or self.__pump.is_in_fault_state() or not self.__pump.is_enabled():
-            raise RuntimeError(f"An unexpected error occurred: {self.__pump.read_last_error()}")
+            raise RuntimeError(
+                f"The dosage did not finish successfully. Error: {last_error.message!r} (Code: {last_error.code})"
+            )
 
     @ApplicationSystem.ensure_operational(PumpFluidDosingServiceFeature)
     def SetFillLevel(
