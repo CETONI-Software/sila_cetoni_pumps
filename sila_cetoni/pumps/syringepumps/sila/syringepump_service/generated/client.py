@@ -14,29 +14,33 @@ from .pumpdrivecontrolservice import (
     PumpDriveControlServiceClient,
     PumpDriveControlServiceFeature,
 )
-from .pumpfluiddosingservice import PumpFluidDosingServiceClient
+from .pumpfluiddosingservice import (
+    PumpFluidDosingServiceClient,
+    PumpFluidDosingServiceFeature,
+    PumpIsInFaultState,
+    PumpIsNotEnabled,
+)
 from .pumpunitcontroller import PumpUnitControllerClient
 from .syringeconfigurationcontroller import SyringeConfigurationControllerClient
 
 
 class Client(SilaClient):
+    PumpDriveControlService: PumpDriveControlServiceClient
+
+    PumpUnitController: PumpUnitControllerClient
 
     ForceMonitoringService: ForceMonitoringServiceClient
 
-    PumpDriveControlService: PumpDriveControlServiceClient
-
     PumpFluidDosingService: PumpFluidDosingServiceClient
-
-    PumpUnitController: PumpUnitControllerClient
 
     SyringeConfigurationController: SyringeConfigurationControllerClient
 
     _expected_features: Set[FullyQualifiedFeatureIdentifier] = {
         FullyQualifiedFeatureIdentifier("org.silastandard/core/SiLAService/v1"),
-        FullyQualifiedFeatureIdentifier("de.cetoni/pumps.syringepumps/ForceMonitoringService/v1"),
         FullyQualifiedFeatureIdentifier("de.cetoni/pumps.syringepumps/PumpDriveControlService/v1"),
-        FullyQualifiedFeatureIdentifier("de.cetoni/pumps.syringepumps/PumpFluidDosingService/v1"),
         FullyQualifiedFeatureIdentifier("de.cetoni/pumps.syringepumps/PumpUnitController/v1"),
+        FullyQualifiedFeatureIdentifier("de.cetoni/pumps.syringepumps/ForceMonitoringService/v1"),
+        FullyQualifiedFeatureIdentifier("de.cetoni/pumps.syringepumps/PumpFluidDosingService/v1"),
         FullyQualifiedFeatureIdentifier("de.cetoni/pumps.syringepumps/SyringeConfigurationController/v1"),
     }
 
@@ -54,4 +58,12 @@ class Client(SilaClient):
 
         self._register_defined_execution_error_class(
             PumpDriveControlServiceFeature.defined_execution_errors["NotSupported"], NotSupported
+        )
+
+        self._register_defined_execution_error_class(
+            PumpFluidDosingServiceFeature.defined_execution_errors["PumpIsInFaultState"], PumpIsInFaultState
+        )
+
+        self._register_defined_execution_error_class(
+            PumpFluidDosingServiceFeature.defined_execution_errors["PumpIsNotEnabled"], PumpIsNotEnabled
         )

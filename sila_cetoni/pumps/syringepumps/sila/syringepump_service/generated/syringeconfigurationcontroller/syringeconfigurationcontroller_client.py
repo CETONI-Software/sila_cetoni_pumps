@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-
     from typing import Iterable, Optional
 
     from sila2.client import ClientMetadataInstance, ClientObservableProperty
@@ -18,9 +17,7 @@ if TYPE_CHECKING:
 
 class SyringeConfigurationControllerClient:
     """
-
     Provides syringe pump specific functions for configuration (i.e. the configuration of the syringe itself).
-
     """
 
     InnerDiameter: ClientObservableProperty[float]
@@ -41,9 +38,7 @@ class SyringeConfigurationControllerClient:
         metadata: Optional[Iterable[ClientMetadataInstance]] = None,
     ) -> SetSyringeParameters_Responses:
         """
-
         Set syringe parameters.
-        If you change the syringe in one device, you need to setup the new syringe parameters to get proper conversion of flow rate und volume units.
-
+            If you change the syringe in one device, you need to setup the new syringe parameters to get proper conversion of flow rate und volume units.
         """
         ...

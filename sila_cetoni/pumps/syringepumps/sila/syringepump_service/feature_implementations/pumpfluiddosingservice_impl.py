@@ -19,6 +19,8 @@ from ..generated.pumpfluiddosingservice import (
     GenerateFlow_Responses,
     PumpFluidDosingServiceBase,
     PumpFluidDosingServiceFeature,
+    PumpIsInFaultState,
+    PumpIsNotEnabled,
     SetFillLevel_Responses,
     StopDosage_Responses,
 )
@@ -68,6 +70,15 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
                 when=self.__system.state.is_operational,
             )
         )
+
+    def __ensure_enabled(self):
+        """
+        Checks that the pump drive is enabled and not in a fault state. Raises the appropriate error if not.
+        """
+        if self.__pump.is_in_fault_state():
+            raise PumpIsInFaultState()
+        if not self.__pump.is_enabled():
+            raise PumpIsNotEnabled()
 
     @ApplicationSystem.ensure_operational(PumpFluidDosingServiceFeature)
     def StopDosage(self, *, metadata: MetadataDict) -> StopDosage_Responses:
@@ -126,6 +137,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         metadata: MetadataDict,
         instance: ObservableCommandInstance,
     ) -> SetFillLevel_Responses:
+        self.__ensure_enabled()
         validate(
             self.__pump,
             PumpFluidDosingServiceFeature["SetFillLevel"],
@@ -149,6 +161,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         metadata: MetadataDict,
         instance: ObservableCommandInstance,
     ) -> DoseVolume_Responses:
+        self.__ensure_enabled()
         validate(self.__pump, PumpFluidDosingServiceFeature["DoseVolume"], FlowRate, 1, volume=Volume, volume_id=0)
         self.__pump.stop_pumping()  # only one dosage allowed
         time.sleep(0.25)  # wait for the currently running dosage to catch up
@@ -162,6 +175,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
     ) -> GenerateFlow_Responses:
         # `FlowRate` is negative to indicate aspiration of fluid.
         # Since `validate` tests against 0 and the max flow rate of the pump, we pass the absolute value of `FlowRate`.
+        self.__ensure_enabled()
         validate(self.__pump, PumpFluidDosingServiceFeature["GenerateFlow"], abs(FlowRate), 0)
         self.__pump.stop_pumping()  # only one dosage allowed
         time.sleep(0.25)  # wait for the currently running dosage to catch up

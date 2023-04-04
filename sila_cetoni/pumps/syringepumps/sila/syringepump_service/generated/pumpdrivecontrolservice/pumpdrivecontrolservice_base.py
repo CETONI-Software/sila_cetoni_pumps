@@ -32,11 +32,9 @@ class PumpDriveControlServiceBase(FeatureImplementationBase, ABC):
 
     def __init__(self, parent_server: Server):
         """
-
         Functionality to control and maintain the drive that drives the pump.
         Allows to initialize a pump (e.g. by executing a reference move) and obtain status information about the pump drive's current state (i.e. enabled/disabled).
         The initialization has to be successful in order for the pump to work correctly and dose fluids. If the initialization fails, the DefinedExecutionError InitializationFailed is thrown.
-
         """
         super().__init__(parent_server=parent_server)
 

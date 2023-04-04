@@ -24,9 +24,7 @@ class SyringeConfigurationControllerBase(FeatureImplementationBase, ABC):
 
     def __init__(self, parent_server: Server):
         """
-
         Provides syringe pump specific functions for configuration (i.e. the configuration of the syringe itself).
-
         """
         super().__init__(parent_server=parent_server)
 
@@ -131,10 +129,8 @@ class SyringeConfigurationControllerBase(FeatureImplementationBase, ABC):
         self, InnerDiameter: float, MaxPistonStroke: float, *, metadata: MetadataDict
     ) -> SetSyringeParameters_Responses:
         """
-
-            Set syringe parameters.
+        Set syringe parameters.
             If you change the syringe in one device, you need to setup the new syringe parameters to get proper conversion of flow rate und volume units.
-
 
 
         :param InnerDiameter: Inner diameter of the syringe tube in millimetres.

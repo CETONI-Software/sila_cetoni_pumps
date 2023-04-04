@@ -38,6 +38,10 @@
                 <Basic>Real</Basic>
             </DataType>
         </Parameter>
+        <DefinedExecutionErrors>
+            <Identifier>PumpIsInFaultState</Identifier>
+            <Identifier>PumpIsNotEnabled</Identifier>
+        </DefinedExecutionErrors>
     </Command>
     <Command>
         <Identifier>DoseVolume</Identifier>
@@ -62,6 +66,10 @@
                 <Basic>Real</Basic>
             </DataType>
         </Parameter>
+        <DefinedExecutionErrors>
+            <Identifier>PumpIsInFaultState</Identifier>
+            <Identifier>PumpIsNotEnabled</Identifier>
+        </DefinedExecutionErrors>
     </Command>
     <Command>
         <Identifier>GenerateFlow</Identifier>
@@ -80,6 +88,10 @@
                 <Basic>Real</Basic>
             </DataType>
         </Parameter>
+        <DefinedExecutionErrors>
+            <Identifier>PumpIsInFaultState</Identifier>
+            <Identifier>PumpIsNotEnabled</Identifier>
+        </DefinedExecutionErrors>
     </Command>
     <Command>
         <Identifier>StopDosage</Identifier>
@@ -125,6 +137,17 @@
             <Basic>Real</Basic>
         </DataType>
     </Property>
+
+    <DefinedExecutionError>
+        <Identifier>PumpIsInFaultState</Identifier>
+        <DisplayName>Pump Is In Fault State</DisplayName>
+        <Description>Pumping is currently not possible because the pump drive is in fault state. Clear the fault first using the EnablePumpDrive Command of the PumpDriveControlService.</Description>
+    </DefinedExecutionError>
+    <DefinedExecutionError>
+        <Identifier>PumpIsNotEnabled</Identifier>
+        <DisplayName>Pump Is Not Enabled</DisplayName>
+        <Description>Pumping is currently not possible because the pump drive is not enabled. Enable the drive first using the EnablePumpDrive Command of the PumpDriveControlService.</Description>
+    </DefinedExecutionError>
 
     <!-- Custom Data Types -->
     <!-- Possibility 1: Structure of a value (real) and a unit (string) -->

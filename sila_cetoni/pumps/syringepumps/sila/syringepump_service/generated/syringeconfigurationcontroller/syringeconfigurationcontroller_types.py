@@ -5,5 +5,4 @@ from typing import NamedTuple
 
 
 class SetSyringeParameters_Responses(NamedTuple):
-
     pass
