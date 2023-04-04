@@ -125,6 +125,8 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
                 message_timer.restart()
             is_pumping = self.__pump.is_pumping()
 
+        time.sleep(0.2)  #: wait for a potential error to propagate from the EPOS to the SDK
+
         if is_pumping or self.__pump.is_in_fault_state() or not self.__pump.is_enabled():
             raise RuntimeError(f"An unexpected error occurred: {self.__pump.read_last_error()}")
 
