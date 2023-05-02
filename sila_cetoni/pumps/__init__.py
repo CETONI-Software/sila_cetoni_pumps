@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import time
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, overload
 
 if TYPE_CHECKING:
@@ -46,11 +47,18 @@ class CetoniPumpDevice(CetoniDevice[qmixpump.Pump]):
         self._is_peristaltic_pump = is_peristaltic_pump
 
     def set_operational(self):
+        ERR_DS402_DRV_ENABLE_FAULT_STATE = 0x0644
+
         super().set_operational()
         self._device_handle.clear_fault()
+        time.sleep(0.1)  # wait for pump to clear fault
         self._device_handle.enable(False)
         while not self._device_handle.is_enabled():
-            self._device_handle.enable(True)
+            try:
+                self._device_handle.enable(True)
+            except qmixbus.DeviceError as err:
+                if err.errorcode != -ERR_DS402_DRV_ENABLE_FAULT_STATE:
+                    raise
 
 
 def parse_devices(json_devices: Optional[Dict[str, Dict]]) -> List[CetoniPumpDevice]:
