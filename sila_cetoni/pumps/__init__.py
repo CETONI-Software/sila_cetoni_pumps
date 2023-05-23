@@ -50,11 +50,21 @@ class CetoniPumpDevice(CetoniDevice[qmixpump.Pump]):
         ERR_DS402_DRV_ENABLE_FAULT_STATE = 0x0644
 
         super().set_operational()
+        logger.info("pump clear fault")
         self._device_handle.clear_fault()
         time.sleep(0.1)  # wait for pump to clear fault
-        self._device_handle.enable(False)
+        logger.info("pump disable")
+        try:
+            self._device_handle.enable(False)
+        except qmixbus.DeviceError as err:
+            if err.errorcode == -ERR_DS402_DRV_ENABLE_FAULT_STATE:
+                # try again
+                logger.info("pump clear fault")
+                self._device_handle.clear_fault()
+
         while not self._device_handle.is_enabled():
             try:
+                logger.info("pump enable")
                 self._device_handle.enable(True)
             except qmixbus.DeviceError as err:
                 if err.errorcode != -ERR_DS402_DRV_ENABLE_FAULT_STATE:
