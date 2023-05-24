@@ -62,12 +62,20 @@ class CetoniPumpDevice(CetoniDevice[qmixpump.Pump]):
                 logger.info("pump clear fault")
                 self._device_handle.clear_fault()
 
+        RETRIES = 3
+
+        i = 0
+
         while not self._device_handle.is_enabled():
+            i += 0
             try:
                 logger.info("pump enable")
                 self._device_handle.enable(True)
             except qmixbus.DeviceError as err:
-                if err.errorcode != -ERR_DS402_DRV_ENABLE_FAULT_STATE:
+                if err.errorcode == -ERR_DS402_DRV_ENABLE_FAULT_STATE and i <= RETRIES:
+                    logger.info(f"pump clear fault ({RETRIES - i} retries left)")
+                    self._device_handle.clear_fault()
+                else:
                     raise
 
 
