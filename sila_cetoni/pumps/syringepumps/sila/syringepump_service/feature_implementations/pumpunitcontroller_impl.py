@@ -14,6 +14,7 @@ from sila_cetoni.utils import PropertyUpdater, not_equal
 
 from ..... import unit_conversion as uc
 from ..generated.pumpunitcontroller import (
+    FlowUnit,
     PumpUnitControllerBase,
     PumpUnitControllerFeature,
     SetFlowUnit_Responses,
@@ -22,9 +23,6 @@ from ..generated.pumpunitcontroller import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-FlowUnit = namedtuple("FlowUnit", ["VolumeUnit", "TimeUnit"])
 
 
 @CetoniApplicationSystem.monitor_traffic
@@ -57,9 +55,8 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
         )
 
     def start(self) -> None:
-        FlowUnit_Struct = namedtuple("FlowUnit_Struct", ("VolumeUnit", "TimeUnit"))
         try:
-            self.SetFlowUnit(FlowUnit_Struct(*self.__config["pump"]["flow_unit"].split("/")), metadata={})
+            self.SetFlowUnit(FlowUnit(*self.__config["pump"]["flow_unit"].split("/")), metadata={})
         except KeyError:
             logger.warning(
                 f"Restoring flow unit failed for {self.parent_server.server_name} - could not read value from config file!"
@@ -74,7 +71,7 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
         super().start()
 
     @ApplicationSystem.ensure_operational(PumpUnitControllerFeature)
-    def SetFlowUnit(self, FlowUnit: Any, *, metadata: MetadataDict) -> SetFlowUnit_Responses:
+    def SetFlowUnit(self, FlowUnit: FlowUnit, *, metadata: MetadataDict) -> SetFlowUnit_Responses:
         logger.debug(f"flow unit {FlowUnit} {type(FlowUnit)}")
 
         flow_unit = FlowUnit

@@ -2,7 +2,7 @@
 from .pumpunitcontroller_base import PumpUnitControllerBase
 from .pumpunitcontroller_client import PumpUnitControllerClient
 from .pumpunitcontroller_feature import PumpUnitControllerFeature
-from .pumpunitcontroller_types import SetFlowUnit_Responses, SetVolumeUnit_Responses, TimeUnit, VolumeUnit
+from .pumpunitcontroller_types import FlowUnit, SetFlowUnit_Responses, SetVolumeUnit_Responses, TimeUnit, VolumeUnit
 
 __all__ = [
     "PumpUnitControllerBase",
@@ -12,4 +12,5 @@ __all__ = [
     "SetVolumeUnit_Responses",
     "VolumeUnit",
     "TimeUnit",
+    "FlowUnit",
 ]
