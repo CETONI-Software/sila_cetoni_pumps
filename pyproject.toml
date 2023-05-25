@@ -28,8 +28,8 @@ dev = [
     "isort",
 ]
 
-[project.scripts]
-sila-cetoni = "sila_cetoni.pumps:main"
+# [project.scripts]
+# sila-cetoni = "sila_cetoni.pumps:main"
 
 [project.urls]
 "Homepage" = "https://cetoni.de/cobomation/#sila"
