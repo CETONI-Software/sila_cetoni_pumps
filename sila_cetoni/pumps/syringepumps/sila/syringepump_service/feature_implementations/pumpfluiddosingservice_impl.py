@@ -82,6 +82,15 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         if not self.__pump.is_enabled():
             raise PumpIsNotEnabled()
 
+    def force_property_update(self) -> None:
+        """
+        Forces an immediate update of all Property values of this Feature
+        """
+        self.update_FlowRate(self.__pump.get_flow_is())
+        self.update_MaxFlowRate(self.__pump.get_flow_rate_max())
+        self.update_SyringeFillLevel(self.__pump.get_fill_level())
+        self.update_MaxSyringeFillLevel(self.__pump.get_volume_max())
+
     @ApplicationSystem.ensure_operational(PumpFluidDosingServiceFeature)
     def StopDosage(self, *, metadata: MetadataDict) -> StopDosage_Responses:
         self.__stop_dosage_called = True

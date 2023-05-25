@@ -35,15 +35,6 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
         self.__system = ApplicationSystem()
         self.__config = ServerConfiguration(self.parent_server.server_name, self.__system.device_config.name)
 
-        try:
-            self.SetSyringeParameters(
-                float(self.__config["pump"]["inner_diameter"]),
-                float(self.__config["pump"]["max_piston_stroke"]),
-                metadata={},
-            )
-        except KeyError as err:
-            logger.warning(f"Restoring syringe parameters failed - could not read {err!r} value from config file!")
-
         not_close = negate(math.isclose)
 
         self.run_periodically(
@@ -62,6 +53,18 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
                 when=self.__system.state.is_operational,
             )
         )
+
+    def start(self) -> None:
+        super().start()
+
+        try:
+            self.SetSyringeParameters(
+                float(self.__config["pump"]["inner_diameter"]),
+                float(self.__config["pump"]["max_piston_stroke"]),
+                metadata={},
+            )
+        except KeyError as err:
+            logger.warning(f"Restoring syringe parameters failed - could not read {err!r} value from config file!")
 
     def update_InnerDiameter(self, InnerDiameter: float, queue: Optional[Queue[float]] = None) -> None:
         self.__config["pump"]["inner_diameter"] = str(InnerDiameter)
@@ -90,3 +93,10 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
         _validate(InnerDiameter, "InnerDiameter", 0)
         _validate(MaxPistonStroke, "MaxPistonStroke", 1)
         self.__pump.set_syringe_param(InnerDiameter, MaxPistonStroke)
+
+        # immediately update our own Properties ...
+        self.update_InnerDiameter(InnerDiameter)
+        self.update_MaxPistonStroke(MaxPistonStroke)
+
+        # ... as well as other Feature's Properties that are affected by the syringe parameters
+        self.parent_server.pumpfluiddosingservice.force_property_update()

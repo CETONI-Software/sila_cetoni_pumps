@@ -84,6 +84,12 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
         self.__config["pump"]["flow_unit"] = f"{flow_unit.VolumeUnit}/{flow_unit.TimeUnit}"
         self.__config.write()
 
+        # immediately update our own Properties ...
+        self.update_FlowUnit(FlowUnit)
+
+        # ... as well as other Feature's Properties that are affected by the syringe parameters
+        self.parent_server.pumpfluiddosingservice.force_property_update()
+
     @ApplicationSystem.ensure_operational(PumpUnitControllerFeature)
     def SetVolumeUnit(self, VolumeUnit: VolumeUnit, *, metadata: MetadataDict) -> SetVolumeUnit_Responses:
         prefix, volume_unit = uc.evaluate_units(
@@ -92,3 +98,9 @@ class PumpUnitControllerImpl(PumpUnitControllerBase):
         self.__pump.set_volume_unit(prefix, volume_unit)
         self.__config["pump"]["volume_unit"] = VolumeUnit
         self.__config.write()
+
+        # immediately update our own Properties ...
+        self.update_VolumeUnit(VolumeUnit)
+
+        # ... as well as other Feature's Properties that are affected by the syringe parameters
+        self.parent_server.pumpfluiddosingservice.force_property_update()
