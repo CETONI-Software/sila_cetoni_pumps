@@ -168,6 +168,10 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         instance: ObservableCommandInstance,
     ) -> SetFillLevel_Responses:
         self.__ensure_enabled()
+
+        if math.isclose(FillLevel, 0.0, abs_tol=1e-04):
+            FillLevel = 0.0
+
         validate(
             self.__pump,
             PumpFluidDosingServiceFeature["SetFillLevel"],
