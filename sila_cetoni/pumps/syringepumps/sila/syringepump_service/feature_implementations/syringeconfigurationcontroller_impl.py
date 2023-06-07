@@ -55,8 +55,6 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
         )
 
     def start(self) -> None:
-        super().start()
-
         try:
             self.SetSyringeParameters(
                 float(self.__config["pump"]["inner_diameter"]),
@@ -65,6 +63,8 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
             )
         except KeyError as err:
             logger.warning(f"Restoring syringe parameters failed - could not read {err!r} value from config file!")
+
+        super().start()
 
     def update_InnerDiameter(self, InnerDiameter: float, queue: Optional[Queue[float]] = None) -> None:
         self.__config["pump"]["inner_diameter"] = str(InnerDiameter)
