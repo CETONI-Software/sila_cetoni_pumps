@@ -28,12 +28,14 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
     __pump: Pump
     __system: ApplicationSystem
     __config: ServerConfiguration
+    __started: bool
 
     def __init__(self, server: SilaServer, pump: Pump):
         super().__init__(server)
         self.__pump = pump
         self.__system = ApplicationSystem()
         self.__config = ServerConfiguration(self.parent_server.server_name, self.__system.device_config.name)
+        self.__started = False
 
         not_close = negate(math.isclose)
 
@@ -42,7 +44,7 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
                 lambda: self.__pump.get_syringe_param().inner_diameter_mm,
                 not_close,
                 self.update_InnerDiameter,
-                when=self.__system.state.is_operational,
+                when=lambda: self.__started and self.__system.state.is_operational(),
             )
         )
         self.run_periodically(
@@ -50,7 +52,7 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
                 lambda: self.__pump.get_syringe_param().max_piston_stroke_mm,
                 not_close,
                 self.update_MaxPistonStroke,
-                when=self.__system.state.is_operational,
+                when=lambda: self.__started and self.__system.state.is_operational(),
             )
         )
 
@@ -65,6 +67,7 @@ class SyringeConfigurationControllerImpl(SyringeConfigurationControllerBase):
             logger.warning(f"Restoring syringe parameters failed - could not read {err!r} value from config file!")
 
         super().start()
+        self.__started = True
 
     def update_InnerDiameter(self, InnerDiameter: float, queue: Optional[Queue[float]] = None) -> None:
         self.__config["pump"]["inner_diameter"] = str(InnerDiameter)
