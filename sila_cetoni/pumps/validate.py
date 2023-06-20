@@ -6,6 +6,9 @@ from sila2.framework.errors.validation_error import ValidationError
 
 from . import unit_conversion as uc
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 def validate(
     pump: Pump,
@@ -34,8 +37,8 @@ def validate(
     max_flow_rate = pump.get_flow_rate_max()
 
     msg = (
-        "The requested {param} ({requested_val:.3} {unit}) has to be in the range between 0 {unit} {exclusive} and "
-        "{max_val:.3} {unit} for this pump."
+        "The requested {param} ({requested_val:.6} {unit}) has to be in the range between 0 {unit} {exclusive} and "
+        "{max_val:.6} {unit} for this pump."
     )
     if flow_rate <= 0 or flow_rate > max_flow_rate:
         unit = uc.flow_unit_to_string(pump.get_flow_unit())
@@ -56,6 +59,7 @@ def validate(
             msg.format(param="fill level", unit=unit, exclusive="", requested_val=fill_level, max_val=max_fill_level),
         )
         err.parameter_fully_qualified_identifier = command.parameters.fields[fill_level_id].fully_qualified_identifier
+        logger.debug(f"requested {fill_level=}, {max_fill_level=}")
         raise err
     if volume is not None and (
         # negative volume indicates aspiration => current_fill_level + abs(volume) must not be more than max_fill_level
@@ -76,4 +80,5 @@ def validate(
             )
         )
         err.parameter_fully_qualified_identifier = command.parameters.fields[volume_id].fully_qualified_identifier
+        logger.debug(f"requested {volume=}, {current_fill_level=}, {max_fill_level=}")
         raise err
