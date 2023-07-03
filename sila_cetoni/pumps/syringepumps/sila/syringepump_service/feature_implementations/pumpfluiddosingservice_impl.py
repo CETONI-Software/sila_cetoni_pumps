@@ -107,23 +107,29 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             return
 
         target_volume = self.__pump.get_target_volume()
-        logger.debug("target volume: %f, current volume: %f", target_volume, self.__pump.get_fill_level())
+        logger.debug(f"{target_volume=}, current volume: {self.__pump.get_fill_level()}")
         if math.isclose(target_volume, 0, abs_tol=1e-05):
             return
 
-        flow_in_sec = self.__pump.get_flow_is() / self.__pump.get_flow_unit().time_unitid.value
+        volume_unit = self.__pump.get_volume_unit()
+        flow_unit = self.__pump.get_flow_unit()
+        conversion_factor = 10 ** (volume_unit.prefix.value - flow_unit.prefix.value)
+
+        flow_in_sec = self.__pump.get_flow_is() / flow_unit.time_unitid.value
         if flow_in_sec == 0:
             # try again, maybe the pump didn't start pumping yet
             time.sleep(0.5)
-            flow_in_sec = self.__pump.get_flow_is() / self.__pump.get_flow_unit().time_unitid.value
+            flow_in_sec = self.__pump.get_flow_is() / flow_unit.time_unitid.value
         if flow_in_sec == 0:
             raise RuntimeError(f"The pump didn't start pumping. Last error: {self.__pump.read_last_error()}")
 
         self.__stop_dosage_called = False
 
-        logger.debug("flow_in_sec: %f", flow_in_sec)
-        dosing_time = datetime.timedelta(seconds=self.__pump.get_target_volume() / flow_in_sec + 2)  # +2 sec buffer
-        logger.debug("dosing_time_s: %fs", dosing_time.seconds)
+        logger.debug(f"{flow_in_sec=}")
+        dosing_time = datetime.timedelta(
+            seconds=self.__pump.get_target_volume() / flow_in_sec * conversion_factor + 2  # +2 sec buffer
+        )
+        logger.debug(f"{dosing_time=}")
 
         timer = PollingTimer(period_ms=dosing_time.seconds * 1000)
         message_timer = PollingTimer(period_ms=500)
@@ -133,7 +139,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             time.sleep(POLLING_TIMEOUT.total_seconds())
             dosing_time -= POLLING_TIMEOUT
             if message_timer.is_expired():
-                logger.info("Fill level: %s", self.__pump.get_fill_level())
+                logger.info(f"{self.__pump.get_fill_level()=}")
                 instance.progress = min(self.__pump.get_dosed_volume() / target_volume, 1)
                 instance.estimated_remaining_time = dosing_time
                 message_timer.restart()
