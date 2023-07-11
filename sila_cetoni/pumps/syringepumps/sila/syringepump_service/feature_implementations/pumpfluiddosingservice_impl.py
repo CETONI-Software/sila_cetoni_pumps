@@ -121,7 +121,12 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             time.sleep(0.5)
             flow_in_sec = self.__pump.get_flow_is() / flow_unit.time_unitid.value
         if flow_in_sec == 0:
-            raise RuntimeError(f"The pump didn't start pumping. Last error: {self.__pump.read_last_error()}")
+            # If the flow is still 0 at this point we either have an actual error (which will be reported by the SDK) or
+            # the dosage was so fast that we didn't even get a chance to notice it. In this case the SDK will report no
+            # error (`error.code == 0`) and we don't want to raise an error as well.
+            error = self.__pump.read_last_error()
+            if error.code != 0:
+                raise RuntimeError(f"The pump didn't start pumping. Last error: {error}")
 
         self.__stop_dosage_called = False
 
