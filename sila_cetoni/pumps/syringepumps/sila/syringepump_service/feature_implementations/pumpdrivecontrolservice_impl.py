@@ -59,7 +59,7 @@ class PumpDriveControlServiceImpl(PumpDriveControlServiceBase):
                 lambda: "Initializing"
                 if self.__is_initializing
                 else "Enabled"
-                if self.__pump.is_enabled() and self.__system.state.is_operational()
+                if self.__system.state.is_operational() and self.__pump.is_enabled()
                 else "Disabled",
                 not_equal,
                 self.update_PumpDriveState,
