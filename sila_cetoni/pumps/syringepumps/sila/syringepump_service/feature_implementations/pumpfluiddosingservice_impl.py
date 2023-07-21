@@ -125,8 +125,16 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             # the dosage was so fast that we didn't even get a chance to notice it. In this case the SDK will report no
             # error (`error.code == 0`) and we don't want to raise an error as well.
             error = self.__pump.read_last_error()
-            if error.code != 0:
-                raise RuntimeError(f"The pump didn't start pumping. Last error: {error}")
+            if error.code == 0:
+                logger.info(f"{flow_in_sec=} -> dosage is probably already finished")
+                target_volume = self.__pump.get_target_volume()
+                logger.debug(f"{target_volume=}, current volume: {self.__pump.get_fill_level()}")
+                if math.isclose(target_volume, 0, abs_tol=1e-05):
+                    logger.info("target volume is close to 0 -> dosage is already finished -> returning")
+                else:
+                    logger.warning(f"target volume not close to 0 -> returning nonetheless because {flow_in_sec=}")
+                return
+            raise RuntimeError(f"The pump didn't start pumping. Last error: {error}")
 
         self.__stop_dosage_called = False
 
