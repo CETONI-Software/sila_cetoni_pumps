@@ -49,18 +49,28 @@ class CetoniPumpDevice(CetoniDevice[qmixpump.Pump]):
     def set_operational(self):
         ERR_DS402_DRV_ENABLE_FAULT_STATE = 0x0644
 
+        if self._device_handle is None:
+            return
+
         super().set_operational()
         logger.info("pump clear fault")
         self._device_handle.clear_fault()
         time.sleep(0.1)  # wait for pump to clear fault
-        logger.info("pump disable")
+
+        if not self._device_handle.is_in_fault_state() and self._device_handle.is_enabled():
+            logger.info(f"pump is already enabled - nothing to do")
+            return
+
         try:
+            logger.info("pump disable")
             self._device_handle.enable(False)
         except qmixbus.DeviceError as err:
             if err.errorcode == -ERR_DS402_DRV_ENABLE_FAULT_STATE:
                 # try again
                 logger.info("pump clear fault")
                 self._device_handle.clear_fault()
+            else:
+                raise
 
         RETRIES = 3
 
@@ -77,6 +87,8 @@ class CetoniPumpDevice(CetoniDevice[qmixpump.Pump]):
                     self._device_handle.clear_fault()
                 else:
                     raise
+
+        logger.info("pump is now operational, fault-cleared, and enabled")
 
 
 def parse_devices(json_devices: Optional[Dict[str, Dict]]) -> List[CetoniPumpDevice]:
