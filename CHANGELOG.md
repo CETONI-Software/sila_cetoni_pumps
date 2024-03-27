@@ -18,6 +18,10 @@ Types of changes
 
 ## Unreleased
 
+## v1.9.2
+
+Sync with sila_cetoni v1.9.2 release
+
 ### Fixed
 
 - Fix wrong UndefinedExecutionError when calling another dosage Command during a running dosage
