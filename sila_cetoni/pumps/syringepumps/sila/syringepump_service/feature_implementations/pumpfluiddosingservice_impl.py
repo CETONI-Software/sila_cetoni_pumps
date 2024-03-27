@@ -5,7 +5,7 @@ import datetime
 import logging
 import math
 import time
-from typing import cast
+from typing import Optional, cast
 
 from qmixsdk.qmixbus import PollingTimer
 from qmixsdk.qmixpump import Pump
@@ -94,7 +94,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         self.update_MaxSyringeFillLevel(self.__pump.get_volume_max())
 
     @ApplicationSystem.ensure_operational(PumpFluidDosingServiceFeature)
-    def StopDosage(self, *, metadata: MetadataDict) -> StopDosage_Responses:
+    def StopDosage(self, *, metadata: Optional[MetadataDict] = None) -> StopDosage_Responses:
         self.__stop_dosage_called = True
         self.__pump.stop_pumping()
         return StopDosage_Responses()
@@ -202,7 +202,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             fill_level=FillLevel,
             fill_level_id=0,
         )
-        self.__pump.stop_pumping()  # only one dosage allowed
+        self.StopDosage()  # only one dosage allowed
         time.sleep(0.25)  # wait for the currently running dosage to catch up
 
         self.__pump.set_fill_level(FillLevel, FlowRate)
@@ -228,7 +228,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
             volume=Volume,
             volume_id=0,
         )
-        self.__pump.stop_pumping()  # only one dosage allowed
+        self.StopDosage()  # only one dosage allowed
         time.sleep(0.25)  # wait for the currently running dosage to catch up
 
         self.__pump.pump_volume(Volume, FlowRate)
@@ -244,7 +244,7 @@ class PumpFluidDosingServiceImpl(PumpFluidDosingServiceBase):
         # Since `validate` tests against 0 and the max flow rate of the pump, we pass the absolute value of `FlowRate`.
         self.__ensure_enabled()
         validate(self.__pump, cast(Command, PumpFluidDosingServiceFeature["GenerateFlow"]), abs(FlowRate), 0)
-        self.__pump.stop_pumping()  # only one dosage allowed
+        self.StopDosage()  # only one dosage allowed
         time.sleep(0.25)  # wait for the currently running dosage to catch up
 
         self.__pump.generate_flow(FlowRate)
