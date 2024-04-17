@@ -71,7 +71,5 @@ class Server(IOServer):
             self.set_feature_implementation(PumpFluidDosingServiceFeature, self.pumpfluiddosingservice)
 
             if valve:
-                self.valvepositioncontroller = ValvePositionControllerImpl(
-                    self, valve=valve, executor=self.child_task_executor
-                )
+                self.valvepositioncontroller = ValvePositionControllerImpl(self, valve=valve)
                 self.set_feature_implementation(ValvePositionControllerFeature, self.valvepositioncontroller)
