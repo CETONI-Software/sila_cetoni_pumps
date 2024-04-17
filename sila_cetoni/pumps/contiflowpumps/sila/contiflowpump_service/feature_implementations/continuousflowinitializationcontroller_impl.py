@@ -2,15 +2,12 @@ from __future__ import annotations
 
 import datetime
 import time
-from concurrent.futures import Executor
-from threading import Event
-from typing import Any, Dict
 
 from qmixsdk.qmixbus import PollingTimer
 from qmixsdk.qmixpump import ContiFlowPump
-from sila2.framework import CommandExecutionStatus, FullyQualifiedIdentifier
-from sila2.framework.errors.validation_error import ValidationError
 from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
+
+from sila_cetoni.utils import PropertyUpdater, not_equal
 
 from ..generated.continuousflowinitializationcontroller import (
     ContinuousFlowInitializationControllerBase,
@@ -20,26 +17,18 @@ from ..generated.continuousflowinitializationcontroller import (
 
 class ContinuousFlowInitializationControllerImpl(ContinuousFlowInitializationControllerBase):
     __pump: ContiFlowPump
-    __stop_event: Event
 
-    def __init__(self, server: SilaServer, pump: ContiFlowPump, executor: Executor):
+    def __init__(self, server: SilaServer, pump: ContiFlowPump):
         super().__init__(server)
         self.__pump = pump
-        self.__stop_event = Event()
 
-        def update_is_initialized(stop_event: Event):
-            new_is_initialized = is_initialized = self.__pump.is_initialized()
-            while not stop_event.is_set():
-                new_is_initialized = self.__pump.is_initialized()
-                if new_is_initialized != is_initialized:
-                    is_initialized = new_is_initialized
-                    self.update_IsInitialized(is_initialized)
-                time.sleep(0.1)
-
-        # initial value
-        self.update_IsInitialized(self.__pump.is_initialized())
-
-        executor.submit(update_is_initialized, self.__stop_event)
+        self.run_periodically(
+            PropertyUpdater(
+                self.__pump.is_initialized,
+                not_equal,
+                self.update_IsInitialized,
+            )
+        )
 
     def InitializeContiflow(
         self, *, metadata: MetadataDict, instance: ObservableCommandInstance
@@ -53,7 +42,3 @@ class ContinuousFlowInitializationControllerImpl(ContinuousFlowInitializationCon
             instance.estimated_remaining_time = datetime.timedelta(seconds=timer.get_msecs_to_expiration() / 1000)
             instance.progress = instance.estimated_remaining_time / MAX_WAIT_TIME
             time.sleep(0.5)
-
-    def stop(self) -> None:
-        super().stop()
-        self.__stop_event.set()

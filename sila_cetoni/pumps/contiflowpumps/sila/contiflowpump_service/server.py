@@ -40,13 +40,9 @@ class Server(SyringePumpServer):
             server_uuid=server_uuid,
         )
 
-        self.continuousflowconfigurationservice = ContinuousFlowConfigurationServiceImpl(
-            self, pump, self.child_task_executor
-        )
-        self.continuousflowdosingservice = ContinuousFlowDosingServiceImpl(self, pump, self.child_task_executor)
-        self.continuousflowinitializationcontroller = ContinuousFlowInitializationControllerImpl(
-            self, pump, self.child_task_executor
-        )
+        self.continuousflowconfigurationservice = ContinuousFlowConfigurationServiceImpl(self, pump)
+        self.continuousflowdosingservice = ContinuousFlowDosingServiceImpl(self, pump)
+        self.continuousflowinitializationcontroller = ContinuousFlowInitializationControllerImpl(self, pump)
 
         self.set_feature_implementation(
             ContinuousFlowConfigurationServiceFeature, self.continuousflowconfigurationservice
