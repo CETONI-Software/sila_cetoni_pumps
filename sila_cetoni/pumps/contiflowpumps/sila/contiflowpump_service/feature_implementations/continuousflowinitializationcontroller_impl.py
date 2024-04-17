@@ -40,5 +40,7 @@ class ContinuousFlowInitializationControllerImpl(ContinuousFlowInitializationCon
 
         while self.__pump.is_initializing() and not timer.is_expired():
             instance.estimated_remaining_time = datetime.timedelta(seconds=timer.get_msecs_to_expiration() / 1000)
-            instance.progress = instance.estimated_remaining_time / MAX_WAIT_TIME
+            instance.progress = instance.estimated_remaining_time / MAX_WAIT_TIME  # type: ignore
             time.sleep(0.5)
+
+        return InitializeContiflow_Responses()

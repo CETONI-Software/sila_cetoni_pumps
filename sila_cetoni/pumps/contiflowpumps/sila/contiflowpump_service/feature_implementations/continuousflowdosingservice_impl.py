@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import time
+from typing import cast
 
 from qmixsdk.qmixpump import ContiFlowPump
+from sila2.framework import Command
 from sila2.server import MetadataDict, ObservableCommandInstance, SilaServer
 
 from sila_cetoni.utils import PropertyUpdater, not_close
@@ -40,11 +42,12 @@ class ContinuousFlowDosingServiceImpl(ContinuousFlowDosingServiceBase):
 
     def StopDosage(self, *, metadata: MetadataDict) -> StopDosage_Responses:
         self.__pump.stop_pumping()
+        return StopDosage_Responses()
 
     def GenerateFlow(
         self, FlowRate: float, *, metadata: MetadataDict, instance: ObservableCommandInstance
     ) -> GenerateFlow_Responses:
-        validate(self.__pump, ContinuousFlowDosingServiceFeature["GenerateFlow"], FlowRate)
+        validate(self.__pump, cast(Command, ContinuousFlowDosingServiceFeature["GenerateFlow"]), FlowRate, 0)
         # self.__pump.stop_pumping() # only one dosage allowed
         # time.sleep(0.25) # wait for the currently running dosage to catch up
 
@@ -61,3 +64,5 @@ class ContinuousFlowDosingServiceImpl(ContinuousFlowDosingServiceBase):
             raise RuntimeError(
                 f"Pump is in fault state. The last error that occurred was {self.__pump.read_last_error()!r}"
             )
+
+        return GenerateFlow_Responses()

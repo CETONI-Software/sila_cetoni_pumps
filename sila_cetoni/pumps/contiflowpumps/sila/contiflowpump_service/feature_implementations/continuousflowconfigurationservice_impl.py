@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from typing import cast
+
 from qmixsdk.qmixpump import ContiFlowProperty, ContiFlowPump, ContiFlowSwitchingMode
+from sila2.framework import Command
 from sila2.framework.errors.validation_error import ValidationError
 from sila2.server import MetadataDict, SilaServer
 
@@ -73,29 +76,31 @@ class ContinuousFlowConfigurationServiceImpl(ContinuousFlowConfigurationServiceB
         )
 
     def SetSwitchingMode(self, SwitchingMode: str, *, metadata: MetadataDict) -> SetSwitchingMode_Responses:
-        try:
-            self.__pump.set_device_property(
-                ContiFlowProperty.SWITCHING_MODE, self.__ALLOWED_SWITCHING_MODES.get(SwitchingMode)
-            )
-        except KeyError:
+        if SwitchingMode not in self.__ALLOWED_SWITCHING_MODES:
             err = ValidationError(
                 "The given value for the Contiflow Switching Mode is invalid. Allowed values are: "
                 + ", ".join(self.__ALLOWED_SWITCHING_MODES.keys())
             )
             err.parameter_fully_qualified_identifier = (
-                ContinuousFlowConfigurationServiceFeature["SetSwitchingMode"]
+                cast(Command, ContinuousFlowConfigurationServiceFeature["SetSwitchingMode"])
                 .parameters.fields[0]
                 .fully_qualified_identifier
             )
             raise err
 
+        self.__pump.set_device_property(ContiFlowProperty.SWITCHING_MODE, self.__ALLOWED_SWITCHING_MODES[SwitchingMode])
+        return SetSwitchingMode_Responses()
+
     def SetRefillFlowRate(self, RefillFlowRate: float, *, metadata: MetadataDict) -> SetRefillFlowRate_Responses:
         self.__pump.set_device_property(ContiFlowProperty.REFILL_FLOW, RefillFlowRate)
+        return SetRefillFlowRate_Responses()
 
     def SetCrossFlowDuration(
         self, CrossFlowDuration: float, *, metadata: MetadataDict
     ) -> SetCrossFlowDuration_Responses:
         self.__pump.set_device_property(ContiFlowProperty.CROSSFLOW_DURATION_S, CrossFlowDuration)
+        return SetCrossFlowDuration_Responses()
 
     def SetOverlapDuration(self, OverlapDuration: float, *, metadata: MetadataDict) -> SetOverlapDuration_Responses:
         self.__pump.set_device_property(ContiFlowProperty.OVERLAP_DURATION_S, OverlapDuration)
+        return SetOverlapDuration_Responses()
